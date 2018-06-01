@@ -47,7 +47,8 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="LEDBlink.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClInclude Include="rocket_packet.h" />
     <None Include="mbed.props" />
     <ClCompile Include="$(BSP_ROOT)\hal\mbed_flash_api.c" />
     <ClCompile Include="$(BSP_ROOT)\hal\mbed_gpio.c" />
