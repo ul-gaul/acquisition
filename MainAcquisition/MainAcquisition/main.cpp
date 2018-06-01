@@ -6,6 +6,7 @@
 
 
 #include <mbed.h>
+#include "GPS.h"
 
 // relay command related defines
 #define COMMAND_LENGTH 3
@@ -37,6 +38,9 @@ DigitalOut r_feedback_deploy2(PD_2);
 // serial ports
 Serial ser_rfcomm(PA_9, PA_10);
 Serial ser_relays(PC_10, PC_11);
+
+// GPS object
+GPS gps(PD_8, PD_9);
 
 // Ticker (timer) object to send data to ground station
 Ticker rf_ticker;

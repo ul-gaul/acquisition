@@ -1280,9 +1280,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\GPS.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rocket_packet.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GPS.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
