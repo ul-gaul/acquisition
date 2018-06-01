@@ -329,4 +329,9 @@ ASALocalRun/
 .mfractor/
 
 
+# misc
+MainAcquisition/MainAcquisition/VisualGDB/
+MainAcquisition/MainAcquisition/MainAcquisition.vcxproj
+MainAcquisition/MainAcquisition/MainAcquisition.vcxproj.filters
+
 
