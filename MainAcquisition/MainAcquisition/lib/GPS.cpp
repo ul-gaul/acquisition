@@ -22,7 +22,7 @@
  
 #include "GPS.h"
 
-Serial pc1(USBTX, USBRX);
+//Serial pc1(USBTX, USBRX);
 
 GPS::GPS(PinName tx, PinName rx) : _gps(tx, rx) {
     _gps.baud(9600);
@@ -44,11 +44,11 @@ int GPS::sample() {
         getline();
         // Check if it is a GPGGA msg (matches both locked and non-locked msg)
         //pc1.printf(msg);
-        pc1.printf("\n");
+        //pc1.printf("\n");
         wait(5);
-        pc1.printf("display msg\r\n");
-        pc1.printf(msg);
-        pc1.printf("\n");
+        //pc1.printf("display msg\r\n");
+        //pc1.printf(msg);
+        //pc1.printf("\n");
         if(sscanf(msg, "GPGGA,%f,%f,%c,%f,%c,%d,%d,%f,%f,%c,%f,%c", &time, &latitude, &ns, &longitude, &ew, &lock, &num_sat, &hori_dilute, &alt, &hu, &geoid, &gu/*, &age_diff, &diff_ID*/) >= 1) { 
             if(!lock) {
                 longitude = 0.0;
@@ -67,11 +67,11 @@ int GPS::sample() {
 //                minutes = longitude - (degrees * 100.0f);
 //                longitude = degrees + minutes / 60.0f;
 //                pc1.printf(msg);
-                pc1.printf("\n\rlongitude is %f\n\r", longitude);
-                pc1.printf("\n\rtime is %f\n\r", time);
-                pc1.printf("ns is %c\n\r", ns);
-                pc1.printf("ew is %c\n\r", ew);
-                pc1.printf("alt is %f\n\r", alt);
+                //pc1.printf("\n\rlongitude is %f\n\r", longitude);
+                //pc1.printf("\n\rtime is %f\n\r", time);
+                //pc1.printf("ns is %c\n\r", ns);
+                //pc1.printf("ew is %c\n\r", ew);
+                //pc1.printf("alt is %f\n\r", alt);
                 
                 latitude /= 100;
                 longitude /= 100;
@@ -138,11 +138,11 @@ void GPS::getline() {
                             //a = _gps.getc();
                             //msg[i] = a;
                             //pc1.printf(msg);
-                            pc1.printf("\r\n");
+                            //pc1.printf("\r\n");
         
                             for (n = 5; n < 456; n++) {
                                msg[n] = _gps.getc();
-                               pc1.printf("%c", msg[n]);
+                               //pc1.printf("%c", msg[n]);
                                if(msg[n] == '\r') {
                                  msg[n] = '0';
                                  return;

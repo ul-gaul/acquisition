@@ -7,6 +7,7 @@
 
 #include <mbed.h>
 #include "GPS.h"
+#include "rocket_packet.h"
 
 // relay command related defines
 #define COMMAND_LENGTH 3
@@ -21,6 +22,9 @@
 
 // RF communication related defines
 #define RF_SEND_PERIOD 0.1	// 10Hz
+
+// GPS related defines
+#define GPS_SAMPLE_PERIOD 1	// 1Hz
 
 // relay GPIOs
 DigitalOut r_set_stm32(PD_6);
@@ -42,8 +46,10 @@ Serial ser_relays(PC_10, PC_11);
 // GPS object
 GPS gps(PD_8, PD_9);
 
+
 // Ticker (timer) object to send data to ground station
 Ticker rf_ticker;
+Ticker gps_ticker;
 
 // enum for the relay command decoding
 enum RelayDecodeStates {
@@ -54,15 +60,20 @@ enum RelayDecodeStates {
 enum RelayDecodeStates r_decode_state = WAIT_COMMAND;
 uint8_t r_command[COMMAND_LENGTH];
 
+// global rocket data and rocket packet variables
+RocketData rocket_data;
+RocketPacket rocket_packet;
 
 void ser_relay_handler(void);
 void decode_relay_command(uint8_t* cmd, uint8_t b);
 void execute_relay_command(uint8_t* cmd);
 void send_packet();
+void update_gps();
 
 int main() {
 	ser_relays.attach(&ser_relay_handler);
 	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
+	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
 	for (;;) {
 		//g_LED = 1;
 		//wait_ms(500);
@@ -132,13 +143,16 @@ void execute_relay_command(uint8_t* cmd) {
 	case SET_RELAY:
 		switch(cmd[1]) {
 		case RELAY_STM32:
-			
+			r_reset_stm32 = 0;
+			r_set_stm32 = 1;
 			break;
 		case RELAY_DEPLOY1:
-			
+			r_reset_deploy1 = 0;
+			r_set_deploy1 = 1;
 			break;
 		case RELAY_DEPLOY2:
-			
+			r_reset_deploy2 = 0;
+			r_set_deploy2 = 1;
 			break;
 		}
 		// send ACK (0x01)
@@ -147,13 +161,16 @@ void execute_relay_command(uint8_t* cmd) {
 	case RESET_RELAY:
 		switch(cmd[1]) {
 		case RELAY_STM32:
-			
+			r_set_stm32 = 0;
+			r_reset_stm32 = 1;
 			break;
 		case RELAY_DEPLOY1:
-			
+			r_set_deploy1 = 0;
+			r_reset_deploy1 = 1;
 			break;
 		case RELAY_DEPLOY2:
-			
+			r_set_deploy2 = 0;
+			r_reset_deploy2 = 1;
 			break;
 		}
 		// send ACK (0x01)
@@ -164,4 +181,16 @@ void execute_relay_command(uint8_t* cmd) {
 
 void send_packet() {
 	// TODO send rocket packet
+}
+
+void update_gps() {
+	// if sample succeeds, update rocket data
+	if(gps.sample()) {
+		rocket_data.latitude = gps.latitude;
+		rocket_data.longitude = gps.longitude;
+	}
+}
+
+void update_10dof() {
+	// TODO read 10DOF values and update rocket data
 }
