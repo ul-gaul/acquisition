@@ -63,22 +63,27 @@ uint8_t r_command[COMMAND_LENGTH];
 // global rocket data and rocket packet variables
 RocketData rocket_data;
 RocketPacket rocket_packet;
+char* rocket_packet_serialized;
+unsigned int sizeof_rocket_packet;
 
 void ser_relay_handler(void);
 void decode_relay_command(uint8_t* cmd, uint8_t b);
 void execute_relay_command(uint8_t* cmd);
+void serialize_rocket_packet(RocketPacket pkt, char* s);
 void send_packet();
 void update_gps();
+void update_10dof();
 
 int main() {
 	ser_relays.attach(&ser_relay_handler);
 	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
 	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
+	// TODO attach 10DOF
+	sizeof_rocket_packet = sizeof(unsigned long)
+								+ 4 * sizeof(float)
+								+ sizeof(uint8_t);
+	rocket_packet_serialized = (char *) malloc((size_t) sizeof_rocket_packet);
 	for (;;) {
-		//g_LED = 1;
-		//wait_ms(500);
-		//g_LED = 0;
-		//wait_ms(500);
 	}
 }
 
@@ -179,8 +184,31 @@ void execute_relay_command(uint8_t* cmd) {
 	}
 }
 
+void serialize_rocket_packet(RocketPacket pkt, char* s) {
+	size_t offset = 0;
+	// copy struct into char array, using memcpy to avoid packing related bugs,
+	// sending everything in order
+	memcpy(s + offset, (void *) &pkt.data.timestamp, sizeof(pkt.data.timestamp));
+	offset += sizeof(pkt.data.timestamp);
+	memcpy(s + offset, (void *) &pkt.data.altitude, sizeof(pkt.data.altitude));
+	offset += sizeof(pkt.data.altitude);
+	memcpy(s + offset, (void *) &pkt.data.latitude, sizeof(pkt.data.latitude));
+	offset += sizeof(pkt.data.latitude);
+	memcpy(s + offset, (void *) &pkt.data.longitude, sizeof(pkt.data.longitude));
+	offset += sizeof(pkt.data.longitude);
+	// compute checksum
+	pkt.checksum = 0;
+	for(int i = 0 ; i < offset ; i++) {
+		pkt.checksum += s[i];
+	}
+	memcpy(s + offset, (void *) &pkt.checksum, sizeof(pkt.checksum));
+}
+
 void send_packet() {
-	// TODO send rocket packet
+	serialize_rocket_packet(rocket_packet, rocket_packet_serialized);
+	for(unsigned int i = 0; i < sizeof_rocket_packet; i++) {
+		ser_rfcomm.putc(rocket_packet_serialized[i]);
+	}
 }
 
 void update_gps() {
