@@ -102,15 +102,18 @@ float get_altitude(int groundpressure);
 int main() {
 	// attach various interrupts to timers and peripherals
 	ser_relays.attach(&ser_relay_handler);
-	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
-	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
-	imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
+//	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
+//	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
+	//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
 	DigitalOut led0(PD_15);
 	// initialize sensors
-	if(bmp180.init() != 0) {
+	int bmp180_err = bmp180.init();
+	if(bmp180_err != 0) {
 		// error with bmp180
 		while(1);
 	}
+	ground_pressure = get_pressure();
+	update_10dof();
 	ground_pressure = get_pressure();
 	sizeof_rocket_packet = sizeof(unsigned long)
 								+ 13 * sizeof(float)
@@ -119,7 +122,9 @@ int main() {
 	for (;;) {
 		//		ser_relays.putc(0x45);
 		//		wait_ms(10);
-		wait_ms(200);
+//		update_gps();
+		update_10dof();
+		send_packet();
 		led0 = !led0;
 	}
 }
@@ -312,6 +317,8 @@ int get_pressure() {
 
 float get_altitude(int groundpressure) {
 	int pressure;
+	float a;
 	pressure = get_pressure();
-	return 44330 * (1 - pow(pressure / groundpressure, 1.0 / 5.255));
+	a = 44330.0 * (1 - pow(((float) pressure / groundpressure), 1.0 / 5.255));
+	return a;
 }
