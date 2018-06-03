@@ -1283,12 +1283,30 @@
     <ClCompile Include="lib\GPS.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\BMP180.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LSM303DLHC.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\L3GD20.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rocket_packet.h">
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="lib\GPS.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\BMP180.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LSM303DLHC.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\L3GD20.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>

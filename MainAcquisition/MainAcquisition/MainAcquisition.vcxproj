@@ -61,9 +61,15 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClCompile Include="lib\BMP180.cpp" />
     <ClCompile Include="lib\GPS.cpp" />
+    <ClCompile Include="lib\L3GD20.cpp" />
+    <ClCompile Include="lib\LSM303DLHC.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClInclude Include="lib\BMP180.h" />
     <ClInclude Include="lib\GPS.h" />
+    <ClInclude Include="lib\L3GD20.h" />
+    <ClInclude Include="lib\LSM303DLHC.h" />
     <ClInclude Include="rocket_packet.h" />
     <None Include="mbed.props" />
     <ClCompile Include="$(BSP_ROOT)\hal\mbed_flash_api.c" />
