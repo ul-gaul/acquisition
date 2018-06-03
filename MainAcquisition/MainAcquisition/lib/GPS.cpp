@@ -25,7 +25,7 @@
 //Serial pc1(USBTX, USBRX);
 
 GPS::GPS(PinName tx, PinName rx) : _gps(tx, rx) {
-    _gps.baud(9600);
+    _gps.baud(115200);
       
     longitude = 0.0;
     latitude = 0.0;
