@@ -10,7 +10,7 @@
 #include "BMP180.h"
 #include "LSM303DLHC.h"
 #include "L3GD20.h"
-#include "SDFileSystem.h"
+//#include "SDFileSystem.h"
 #include "rocket_packet.h"
 
 // relay command related defines
@@ -72,7 +72,7 @@ L3GD20 l3gd20(IMU10DOF_SDA, IMU10DOF_SCL);
 int ground_pressure;
 
 // SD card object
-SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
+//SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
 
 // Ticker (timer) object to send data to ground station
 Ticker rf_ticker;
