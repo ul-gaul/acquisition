@@ -10,6 +10,7 @@
 #include "BMP180.h"
 #include "LSM303DLHC.h"
 #include "L3GD20.h"
+#include "SDFileSystem.h"
 #include "rocket_packet.h"
 
 // relay command related defines
@@ -22,6 +23,7 @@
 #define RELAY_STM32 0x00
 #define RELAY_DEPLOY1 0x01
 #define RELAY_DEPLOY2 0x02
+#define RELAY_PAYLOAD 0x03
 
 // RF communication related defines
 #define RF_SEND_PERIOD 0.1	// 10Hz
@@ -35,17 +37,21 @@
 #define IMU10DOF_SCL PB_8
 
 // relay GPIOs
-DigitalOut r_set_stm32(PD_6);
-DigitalOut r_reset_stm32(PD_7);
-DigitalOut r_feedback_stm32(PD_12);
+DigitalOut r_set_stm32(PD_0);
+DigitalOut r_reset_stm32(PD_1);
+DigitalOut r_feedback_stm32(PD_2);
 
-DigitalOut r_set_deploy1(PD_13);
-DigitalOut r_reset_deploy1(PD_10);
-DigitalOut r_feedback_deploy1(PD_11);
+DigitalOut r_set_deploy1(PD_12);
+DigitalOut r_reset_deploy1(PD_11);
+DigitalOut r_feedback_deploy1(PD_10);
 
-DigitalOut r_set_deploy2(PD_0);
-DigitalOut r_reset_deploy2(PD_1);
-DigitalOut r_feedback_deploy2(PD_2);
+DigitalOut r_set_deploy2(PD_15);
+DigitalOut r_reset_deploy2(PD_14);
+DigitalOut r_feedback_deploy2(PD_13);
+
+DigitalOut r_set_payload(PD_3);
+DigitalOut r_reset_payload(PD_6);
+DigitalOut r_feedback_payload(PD_7);
 
 // serial ports
 Serial ser_rfcomm(PA_9, PA_10);
@@ -65,6 +71,10 @@ LSM303DLHC lsm303(IMU10DOF_SDA, IMU10DOF_SCL);
 L3GD20 l3gd20(IMU10DOF_SDA, IMU10DOF_SCL);
 int ground_pressure;
 
+// SD card object
+SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
+char filename[] = "/gaulfs/data.csv";
+__FILE* fd;
 
 // Ticker (timer) object to send data to ground station
 Ticker rf_ticker;
@@ -97,6 +107,7 @@ void update_10dof();
 float get_temperature();
 int get_pressure();
 float get_altitude(int groundpressure);
+void save_data();
 
 
 int main() {
@@ -105,6 +116,7 @@ int main() {
 //	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
 //	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
 	//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
+	// TODO remove the led eventually
 	DigitalOut led0(PD_15);
 	// initialize sensors
 	int bmp180_err = bmp180.init();
@@ -119,12 +131,16 @@ int main() {
 								+ 13 * sizeof(float)
 								+ sizeof(uint8_t);
 	rocket_packet_serialized = (char *) malloc((size_t) sizeof_rocket_packet);
+	// init SD card file and write header
+	fd = fopen(filename, "w");
+	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
 	for (;;) {
 		//		ser_relays.putc(0x45);
 		//		wait_ms(10);
 //		update_gps();
 		update_10dof();
 		send_packet();
+		save_data();
 		led0 = !led0;
 	}
 }
@@ -149,7 +165,7 @@ void decode_relay_command(uint8_t* cmd, uint8_t b) {
 		}
 		break;
 	case WAIT_RELAY_NO:
-		if(b == RELAY_STM32 || b == RELAY_DEPLOY1 || b == RELAY_DEPLOY2) {
+		if(b == RELAY_STM32 || b == RELAY_DEPLOY1 || b == RELAY_DEPLOY2 || b == RELAY_PAYLOAD) {
 			cmd[1] = b;
 			r_decode_state = WAIT_CHECKSUM;
 		} else {
@@ -186,8 +202,11 @@ void execute_relay_command(uint8_t* cmd) {
 		case RELAY_DEPLOY2:
 			ser_relays.putc(r_feedback_deploy2.read());
 			break;
+		case RELAY_PAYLOAD:
+			ser_relays.putc(r_feedback_payload.read());
+			break;
 		}
-		break;
+		return;
 	case SET_RELAY:
 		switch(cmd[1]) {
 		case RELAY_STM32:
@@ -201,6 +220,10 @@ void execute_relay_command(uint8_t* cmd) {
 		case RELAY_DEPLOY2:
 			r_reset_deploy2 = 0;
 			r_set_deploy2 = 1;
+			break;
+		case RELAY_PAYLOAD:
+			r_reset_payload = 0;
+			r_set_payload = 1;
 			break;
 		}
 		// send ACK (0x01)
@@ -220,6 +243,9 @@ void execute_relay_command(uint8_t* cmd) {
 			r_set_deploy2 = 0;
 			r_reset_deploy2 = 1;
 			break;
+		case RELAY_PAYLOAD:
+			r_set_payload = 0;
+			r_reset_payload = 1;
 		}
 		// send ACK (0x01)
 		ser_relays.putc(0x01);
@@ -321,4 +347,13 @@ float get_altitude(int groundpressure) {
 	pressure = get_pressure();
 	a = 44330.0 * (1 - pow(((float) pressure / groundpressure), 1.0 / 5.255));
 	return a;
+}
+
+void save_data() {
+	fprintf(fd, "%lu, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n",
+		rocket_data.timestamp, rocket_data.latitude, rocket_data.longitude,
+		rocket_data.altitude, rocket_data.temperature, 
+		rocket_data.x_accel, rocket_data.y_accel, rocket_data.z_accel,
+		rocket_data.x_magnet, rocket_data.y_magnet, rocket_data.y_magnet,
+		rocket_data.x_gyro, rocket_data.y_gyro, rocket_data.z_gyro);
 }

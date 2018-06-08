@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <AdditionalIncludeDirectories>lib;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem/bd;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem/fat;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem/fat/ChaN;lib/SDFileSystem;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
@@ -61,15 +61,43 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\ChainingBlockDevice.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\HeapBlockDevice.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\MBRBlockDevice.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\ProfilingBlockDevice.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\SlicingBlockDevice.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\Dir.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\ChaN\ccsbcs.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\ChaN\ff.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\FATFileSystem.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\File.cpp" />
+    <ClCompile Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\FileSystem.cpp" />
     <ClCompile Include="lib\BMP180.cpp" />
     <ClCompile Include="lib\GPS.cpp" />
     <ClCompile Include="lib\L3GD20.cpp" />
     <ClCompile Include="lib\LSM303DLHC.cpp" />
+    <ClCompile Include="lib\SDFileSystem\SDFileSystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\BlockDevice.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\ChainingBlockDevice.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\HeapBlockDevice.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\MBRBlockDevice.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\ProfilingBlockDevice.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\bd\SlicingBlockDevice.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\Dir.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\ChaN\diskio.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\ChaN\ff.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\ChaN\ffconf.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\ChaN\integer.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\fat\FATFileSystem.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\File.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\FileSystem.h" />
+    <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.mbed\features\filesystem\mbed_filesystem.h" />
     <ClInclude Include="lib\BMP180.h" />
     <ClInclude Include="lib\GPS.h" />
     <ClInclude Include="lib\L3GD20.h" />
     <ClInclude Include="lib\LSM303DLHC.h" />
+    <ClInclude Include="lib\SDFileSystem\SDFileSystem.h" />
     <ClInclude Include="rocket_packet.h" />
     <None Include="mbed.props" />
     <ClCompile Include="$(BSP_ROOT)\hal\mbed_flash_api.c" />
