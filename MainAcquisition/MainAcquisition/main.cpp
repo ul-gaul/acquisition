@@ -73,6 +73,8 @@ int ground_pressure;
 
 // SD card object
 SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
+char filename[] = "/gaulfs/data.csv";
+__FILE* fd;
 
 // Ticker (timer) object to send data to ground station
 Ticker rf_ticker;
@@ -105,6 +107,7 @@ void update_10dof();
 float get_temperature();
 int get_pressure();
 float get_altitude(int groundpressure);
+void save_data();
 
 
 int main() {
@@ -113,6 +116,7 @@ int main() {
 //	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
 //	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
 	//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
+	// TODO remove the led eventually
 	DigitalOut led0(PD_15);
 	// initialize sensors
 	int bmp180_err = bmp180.init();
@@ -127,12 +131,16 @@ int main() {
 								+ 13 * sizeof(float)
 								+ sizeof(uint8_t);
 	rocket_packet_serialized = (char *) malloc((size_t) sizeof_rocket_packet);
+	// init SD card file and write header
+	fd = fopen(filename, "w");
+	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
 	for (;;) {
 		//		ser_relays.putc(0x45);
 		//		wait_ms(10);
 //		update_gps();
 		update_10dof();
 		send_packet();
+		save_data();
 		led0 = !led0;
 	}
 }
@@ -339,4 +347,13 @@ float get_altitude(int groundpressure) {
 	pressure = get_pressure();
 	a = 44330.0 * (1 - pow(((float) pressure / groundpressure), 1.0 / 5.255));
 	return a;
+}
+
+void save_data() {
+	fprintf(fd, "%lu, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n",
+		rocket_data.timestamp, rocket_data.latitude, rocket_data.longitude,
+		rocket_data.altitude, rocket_data.temperature, 
+		rocket_data.x_accel, rocket_data.y_accel, rocket_data.z_accel,
+		rocket_data.x_magnet, rocket_data.y_magnet, rocket_data.y_magnet,
+		rocket_data.x_gyro, rocket_data.y_gyro, rocket_data.z_gyro);
 }
