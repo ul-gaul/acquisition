@@ -51,7 +51,7 @@ public:
     float alt;
     float geoid, time;
     char ns, ew;
-     char gu, hu;
+	char gu, hu;
      
 private:
     float trunc(float v);

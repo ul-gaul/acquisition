@@ -74,7 +74,7 @@ int ground_pressure;
 // SD card object
 SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
 char filename[] = "/gaulfs/data.csv";
-__FILE* fd;
+FILE* fd;
 
 // Ticker (timer) object to send data to ground station
 Ticker rf_ticker;
@@ -132,15 +132,18 @@ int main() {
 								+ sizeof(uint8_t);
 	rocket_packet_serialized = (char *) malloc((size_t) sizeof_rocket_packet);
 	// init SD card file and write header
-	fd = fopen(filename, "w");
-	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
+//	mkdir("/sd/test", 0777);
+//	fd = fopen("/gaulfs/test/data.csv", "w");
+//	if(fd == NULL) {
+//		// error with sd card
+//		while(1);
+//	}
+//	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
 	for (;;) {
-		//		ser_relays.putc(0x45);
-		//		wait_ms(10);
-//		update_gps();
+		update_gps();
 		update_10dof();
 		send_packet();
-		save_data();
+//		save_data();
 		led0 = !led0;
 	}
 }

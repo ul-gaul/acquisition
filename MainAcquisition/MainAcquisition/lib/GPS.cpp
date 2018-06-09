@@ -36,51 +36,51 @@ GPS::GPS(PinName tx, PinName rx) : _gps(tx, rx) {
 }
 
 int GPS::sample() {
-    //float time, hori_dilute, alt,geoid;
-   
+	//float time, hori_dilute, alt,geoid;
+	int sscanferr;
     int lock;
+	char buf[256];
     
-    while(1) {        
+    while(1) {
+	    
         getline();
-        // Check if it is a GPGGA msg (matches both locked and non-locked msg)
-        //pc1.printf(msg);
-        //pc1.printf("\n");
-        wait(5);
-        //pc1.printf("display msg\r\n");
-        //pc1.printf(msg);
-        //pc1.printf("\n");
-        if(sscanf(msg, "GPGGA,%f,%f,%c,%f,%c,%d,%d,%f,%f,%c,%f,%c", &time, &latitude, &ns, &longitude, &ew, &lock, &num_sat, &hori_dilute, &alt, &hu, &geoid, &gu/*, &age_diff, &diff_ID*/) >= 1) { 
-            if(!lock) {
-                longitude = 0.0;
-                latitude = 0.0;  
-                ns = 'Z';
-                ew = 'Z';
-                alt = 0.0;      
-                return 0;
-            } else {
-                //if(ns == 'S') {    latitude  *= -1.0; }
-//                if(ew == 'W') {    longitude *= -1.0; }
-//                float degrees = trunc(latitude / 100.0f);
-//                float minutes = latitude - (degrees * 100.0f);
-//                latitude = degrees + minutes / 60.0f;    
-//                degrees = trunc(longitude / 100.0f * 0.01f);
-//                minutes = longitude - (degrees * 100.0f);
-//                longitude = degrees + minutes / 60.0f;
-//                pc1.printf(msg);
-                //pc1.printf("\n\rlongitude is %f\n\r", longitude);
-                //pc1.printf("\n\rtime is %f\n\r", time);
-                //pc1.printf("ns is %c\n\r", ns);
-                //pc1.printf("ew is %c\n\r", ew);
-                //pc1.printf("alt is %f\n\r", alt);
-                
-                latitude /= 100;
-                longitude /= 100;
-                
-                return 1;
-            }
-        
-        }
-        return 0;
+	    char* token;
+	    token = strtok(msg, ",");
+	    if(strcmp(token, "GPGGA") != 0) {
+		    return 0;
+	    }
+	    for(int i = 0; i < 8; i++) {
+		    token = strtok(NULL, ",");
+		    if(token == NULL) {
+			    return 0;
+		    }
+		    if(i == 0) {
+			    // get time
+			    time = atof(token);
+		    } else if(i == 1) {
+			    // get latitude
+			    latitude = atof(token);
+			    latitude /= 100;
+		    } else if(i == 2) {
+			    // get north-south char
+			    ns = token[0];
+		    } else if(i == 3) {
+			    // get longitude
+			    longitude = atof(token);
+			    longitude /= 100;
+		    } else if(i == 4) {
+			    // get east-west char
+			    ew = token[0];
+		    } else if(i == 5) {
+			    // get lock on value
+			    lock = atoi(token);
+		    } else if(i == 6) {
+			    // get number of satellites locked on
+			    num_sat = atoi(token);
+		    } else {
+			    break;
+		    }
+	    }
     }
 }
 

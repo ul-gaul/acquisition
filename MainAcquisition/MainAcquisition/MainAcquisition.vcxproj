@@ -43,7 +43,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>lib;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem/bd;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem/fat;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features/filesystem/fat/ChaN;lib/SDFileSystem;C:/Users/MaxDanLaplace/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.mbed/features;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions />
+      <AdditionalOptions>
+      </AdditionalOptions>
       <CLanguageStandard />
       <CPPLanguageStandard />
     </ClCompile>
