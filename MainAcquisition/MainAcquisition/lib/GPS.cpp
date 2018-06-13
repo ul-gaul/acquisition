@@ -41,47 +41,44 @@ int GPS::sample() {
     int lock;
 	char buf[256];
     
-    while(1) {
-	    
-        getline();
-	    char* token;
-	    token = strtok(msg, ",");
-	    if(strcmp(token, "GPGGA") != 0) {
-		    return 0;
-	    }
-	    for(int i = 0; i < 8; i++) {
-		    token = strtok(NULL, ",");
-		    if(token == NULL) {
-			    return 0;
-		    }
-		    if(i == 0) {
-			    // get time
-			    time = atof(token);
-		    } else if(i == 1) {
-			    // get latitude
-			    latitude = atof(token);
-			    latitude /= 100;
-		    } else if(i == 2) {
-			    // get north-south char
-			    ns = token[0];
-		    } else if(i == 3) {
-			    // get longitude
-			    longitude = atof(token);
-			    longitude /= 100;
-		    } else if(i == 4) {
-			    // get east-west char
-			    ew = token[0];
-		    } else if(i == 5) {
-			    // get lock on value
-			    lock = atoi(token);
-		    } else if(i == 6) {
-			    // get number of satellites locked on
-			    num_sat = atoi(token);
-		    } else {
-			    break;
-		    }
-	    }
-    }
+    getline();
+	char* token;
+	token = strtok(msg, ",");
+	if(strcmp(token, "GPGGA") != 0) {
+		return 0;
+	}
+	for(int i = 0; i < 8; i++) {
+		token = strtok(NULL, ",");
+		if(token == NULL) {
+			return 0;
+		}
+		if(i == 0) {
+			// get time
+			time = atof(token);
+		} else if(i == 1) {
+			// get latitude
+			latitude = atof(token);
+			latitude /= 100;
+		} else if(i == 2) {
+			// get north-south char
+			ns = token[0];
+		} else if(i == 3) {
+			// get longitude
+			longitude = atof(token);
+			longitude /= 100;
+		} else if(i == 4) {
+			// get east-west char
+			ew = token[0];
+		} else if(i == 5) {
+			// get lock on value
+			lock = atoi(token);
+		} else if(i == 6) {
+			// get number of satellites locked on
+			num_sat = atoi(token);
+		} else {
+			break;
+		}
+	}
 }
 
 float GPS::trunc(float v) {

@@ -54,8 +54,8 @@ DigitalOut r_reset_payload(PD_6);
 DigitalOut r_feedback_payload(PD_7);
 
 // serial ports
-Serial ser_rfcomm(PA_9, PA_10);
-Serial ser_relays(PC_10, PC_11);
+Serial ser_rfcomm(PA_9, PA_10, 9600);
+Serial ser_relays(PC_10, PC_11, 9600);
 
 // GPS object
 GPS gps(PD_8, PD_9);
@@ -72,8 +72,8 @@ L3GD20 l3gd20(IMU10DOF_SDA, IMU10DOF_SCL);
 int ground_pressure;
 
 // SD card object
-SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
-char filename[] = "/gaulfs/data.csv";
+//SDFileSystem sd(PA_7, PA_6, PA_5, PA_4, "gaulfs");
+//char filename[] = "/gaulfs/data.csv";
 FILE* fd;
 
 // Ticker (timer) object to send data to ground station
@@ -109,15 +109,17 @@ int get_pressure();
 float get_altitude(int groundpressure);
 void save_data();
 
+//SPI spi(PA_7, PA_6, PA_5);
+//DigitalOut cs(PA_4);
 
 int main() {
 	// attach various interrupts to timers and peripherals
 	ser_relays.attach(&ser_relay_handler);
-//	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
-//	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
-	//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
-	// TODO remove the led eventually
-	DigitalOut led0(PD_15);
+	//	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
+	//	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
+		//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
+		// TODO remove the led eventually
+		DigitalOut led0(PD_15);
 	// initialize sensors
 	int bmp180_err = bmp180.init();
 	if(bmp180_err != 0) {
@@ -131,19 +133,41 @@ int main() {
 								+ 13 * sizeof(float)
 								+ sizeof(uint8_t);
 	rocket_packet_serialized = (char *) malloc((size_t) sizeof_rocket_packet);
+	//	cs = 1;
+	//	spi.format(8, 3);
+	//	spi.frequency(1000000);
+	//	while(1) {
+	//		wait_ms(10);
+	// 
+	//		// Select the device by seting chip select low
+	//		cs = 0;
+	// 
+	//		// Send 0x8f, the command to read the WHOAMI register
+	//		spi.write(0x8F);
+	// 
+	//		// Send a dummy byte to receive the contents of the WHOAMI register
+	//		int whoami = spi.write(0x00);
+	// 
+	//		// Deselect the device
+	//		cs = 1;
+	//	}
 	// init SD card file and write header
-//	mkdir("/sd/test", 0777);
-//	fd = fopen("/gaulfs/test/data.csv", "w");
-//	if(fd == NULL) {
-//		// error with sd card
-//		while(1);
-//	}
-//	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
+	//	mkdir("/gaulfs/test", 0777);
+	//	mkdir("/gaulfs/test1", 0777);
+	//	fd = fopen("/gaulfs/test/data.csv", "w");
+	//	if(fd == NULL) {
+	//		// error with sd card
+	//		while(1);
+	//	}
+	//	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
+	ser_rfcomm.putc(10);
 	for (;;) {
+		ser_rfcomm.putc(0x90);
 		update_gps();
 		update_10dof();
+		rocket_packet.data = rocket_data;
 		send_packet();
-//		save_data();
+		//save_data(); no SD card, no need to call this function
 		led0 = !led0;
 	}
 }
@@ -295,6 +319,7 @@ void serialize_rocket_packet(RocketPacket pkt, char* s) {
 	for(int i = 0 ; i < offset ; i++) {
 		pkt.checksum += s[i];
 	}
+	pkt.checksum = ~pkt.checksum;
 	memcpy(s + offset, (void *) &pkt.checksum, sizeof(pkt.checksum));
 }
 
@@ -302,6 +327,7 @@ void send_packet() {
 	serialize_rocket_packet(rocket_packet, rocket_packet_serialized);
 	for(unsigned int i = 0; i < sizeof_rocket_packet; i++) {
 		ser_rfcomm.putc(rocket_packet_serialized[i]);
+		wait_us(100);
 	}
 }
 

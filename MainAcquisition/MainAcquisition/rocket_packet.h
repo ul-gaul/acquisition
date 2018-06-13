@@ -9,7 +9,7 @@
 
 #include "mbed.h"
 
-typedef struct {
+typedef __attribute__((__packed__)) struct {
 	unsigned long timestamp;
 	// GPS values
 	float latitude;
@@ -28,7 +28,7 @@ typedef struct {
 	float z_gyro;
 } RocketData;
 
-typedef struct {
+typedef __attribute__((__packed__)) struct {
 	RocketData data;
 	uint8_t checksum;
 } RocketPacket;
