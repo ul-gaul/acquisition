@@ -37,28 +37,36 @@
 #define IMU10DOF_SCL PB_8
 
 // relay GPIOs
-DigitalOut r_set_stm32(PD_0);
-DigitalOut r_reset_stm32(PD_1);
-DigitalOut r_feedback_stm32(PD_2);
+DigitalOut r_set_stm32(PE_5);
+DigitalOut r_reset_stm32(PE_6);
+DigitalOut r_feedback_stm32(PE_4);
 
-DigitalOut r_set_deploy1(PD_12);
-DigitalOut r_reset_deploy1(PD_11);
-DigitalOut r_feedback_deploy1(PD_10);
+DigitalOut r_set_deploy1(PD_2);
+DigitalOut r_reset_deploy1(PD_1);
+DigitalOut r_feedback_deploy1(PD_6);
 
-DigitalOut r_set_deploy2(PD_15);
-DigitalOut r_reset_deploy2(PD_14);
-DigitalOut r_feedback_deploy2(PD_13);
+DigitalOut r_set_deploy2(PE_0);
+DigitalOut r_reset_deploy2(PE_1);
+DigitalOut r_feedback_deploy2(PE_2);
 
-DigitalOut r_set_payload(PD_3);
-DigitalOut r_reset_payload(PD_6);
+DigitalOut r_set_payload(PD_0);
+DigitalOut r_reset_payload(PD_5);
 DigitalOut r_feedback_payload(PD_7);
 
+// LED GPIOS
+DigitalOut led1(PE_10);
+DigitalOut led2(PE_11);
+DigitalOut led3(PE_12);
+DigitalOut led4(PE_13);
+DigitalOut led5(PE_14);
+DigitalOut led6(PE_15);
+
 // serial ports
-Serial ser_rfcomm(PA_9, PA_10, 9600);
+Serial ser_rfcomm(PD_8, PD_9, 9600);
 Serial ser_relays(PC_10, PC_11, 9600);
 
 // GPS object
-GPS gps(PD_8, PD_9);
+GPS gps(PA_9, PA_10);
 
 // I2C object for the communication with the 10DOF IMU breakout
 // This I2C bus will communicate with the L3DG20H (gyroscope),
@@ -77,9 +85,9 @@ int ground_pressure;
 FILE* fd;
 
 // Ticker (timer) object to send data to ground station
-Ticker rf_ticker;
-Ticker gps_ticker;
-Ticker imu190dof_ticker;
+//Ticker rf_ticker;
+//Ticker gps_ticker;
+//Ticker imu190dof_ticker;
 
 // enum for the relay command decoding
 enum RelayDecodeStates {
@@ -93,8 +101,15 @@ uint8_t r_command[COMMAND_LENGTH];
 // global rocket data and rocket packet variables
 RocketData rocket_data;
 RocketPacket rocket_packet;
-char* rocket_packet_serialized;
+char rocket_packet_serialized[57];
 unsigned int sizeof_rocket_packet;
+
+// global time (in ms) variable
+volatile unsigned long  _millis;
+// configure systick handler for millis timer
+extern "C" void SysTick_Handler(void) {
+	_millis++;
+}
 
 // public functions
 void ser_relay_handler(void);
@@ -108,63 +123,42 @@ float get_temperature();
 int get_pressure();
 float get_altitude(int groundpressure);
 void save_data();
+void millisStart(void);
+unsigned long millis(void);
 
 //SPI spi(PA_7, PA_6, PA_5);
 //DigitalOut cs(PA_4);
 
 int main() {
+	// start millis timer
+	millisStart();
 	// attach various interrupts to timers and peripherals
 	ser_relays.attach(&ser_relay_handler);
 	//	rf_ticker.attach(&send_packet, RF_SEND_PERIOD);
 	//	gps_ticker.attach(&update_gps, GPS_SAMPLE_PERIOD);
-		//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
-		// TODO remove the led eventually
-		DigitalOut led0(PD_15);
+	//imu190dof_ticker.attach(&update_10dof, IMU10DOF_SAMPLE_PERIOD);
+	// TODO remove the led eventually
+	DigitalOut led0(PD_15);
 	// initialize sensors
 	int bmp180_err = bmp180.init();
-	if(bmp180_err != 0) {
-		// error with bmp180
-		while(1);
-	}
 	ground_pressure = get_pressure();
 	update_10dof();
 	ground_pressure = get_pressure();
 	sizeof_rocket_packet = sizeof(unsigned long)
 								+ 13 * sizeof(float)
-								+ sizeof(uint8_t);
-	rocket_packet_serialized = (char *) malloc((size_t) sizeof_rocket_packet);
-	//	cs = 1;
-	//	spi.format(8, 3);
-	//	spi.frequency(1000000);
-	//	while(1) {
-	//		wait_ms(10);
-	// 
-	//		// Select the device by seting chip select low
-	//		cs = 0;
-	// 
-	//		// Send 0x8f, the command to read the WHOAMI register
-	//		spi.write(0x8F);
-	// 
-	//		// Send a dummy byte to receive the contents of the WHOAMI register
-	//		int whoami = spi.write(0x00);
-	// 
-	//		// Deselect the device
-	//		cs = 1;
-	//	}
-	// init SD card file and write header
-	//	mkdir("/gaulfs/test", 0777);
-	//	mkdir("/gaulfs/test1", 0777);
-	//	fd = fopen("/gaulfs/test/data.csv", "w");
-	//	if(fd == NULL) {
-	//		// error with sd card
-	//		while(1);
-	//	}
-	//	fprintf(fd, "Time, latitude, longitude, altitude, temperature, x_accel, y_accel, z_accel, x_magnet, y_magnet, z_magnet, x_gyro, y_gyro, z_gyro");
-	ser_rfcomm.putc(10);
+								+ sizeof(int8_t);
+	size_t size_struct = sizeof(RocketPacket);
+	ser_rfcomm.putc((int8_t) 10);
 	for (;;) {
-		ser_rfcomm.putc(0x90);
+//		ser_rfcomm.putc((int8_t) 0x90);
 		update_gps();
-		update_10dof();
+		if(bmp180_err != 0) {
+			// retry to init bmp180
+			bmp180_err = bmp180.init();
+		} else {
+			update_10dof();
+		}
+		rocket_data.timestamp = millis();
 		rocket_packet.data = rocket_data;
 		send_packet();
 		//save_data(); no SD card, no need to call this function
@@ -325,10 +319,16 @@ void serialize_rocket_packet(RocketPacket pkt, char* s) {
 
 void send_packet() {
 	serialize_rocket_packet(rocket_packet, rocket_packet_serialized);
-	for(unsigned int i = 0; i < sizeof_rocket_packet; i++) {
-		ser_rfcomm.putc(rocket_packet_serialized[i]);
-		wait_us(100);
-	}
+	// wait for serial to be available
+	while(!ser_rfcomm.writeable());
+	// send start byte
+	ser_rfcomm.putc((int8_t) 's');
+	//	for(unsigned int i = 0; i < sizeof_rocket_packet; i++) {
+	//		if(ser_rfcomm.writeable()) {
+	//			ser_rfcomm.putc((int8_t) rocket_packet_serialized[i]);
+	//		}
+	//	}
+	ser_rfcomm.puts(rocket_packet_serialized);
 }
 
 void update_gps() {
@@ -385,4 +385,12 @@ void save_data() {
 		rocket_data.x_accel, rocket_data.y_accel, rocket_data.z_accel,
 		rocket_data.x_magnet, rocket_data.y_magnet, rocket_data.y_magnet,
 		rocket_data.x_gyro, rocket_data.y_gyro, rocket_data.z_gyro);
+}
+
+void millisStart(void) {
+	SysTick_Config(SystemCoreClock / 1000);
+}
+ 
+unsigned long millis(void) {
+	return _millis;
 }
