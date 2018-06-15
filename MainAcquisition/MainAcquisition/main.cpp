@@ -323,12 +323,10 @@ void send_packet() {
 	while(!ser_rfcomm.writeable());
 	// send start byte
 	ser_rfcomm.putc((int8_t) 's');
-	//	for(unsigned int i = 0; i < sizeof_rocket_packet; i++) {
-	//		if(ser_rfcomm.writeable()) {
-	//			ser_rfcomm.putc((int8_t) rocket_packet_serialized[i]);
-	//		}
-	//	}
-	ser_rfcomm.puts(rocket_packet_serialized);
+	for(unsigned int i = 0; i < sizeof_rocket_packet; i++) {
+		while(!ser_rfcomm.writeable());
+		ser_rfcomm.putc((int8_t) rocket_packet_serialized[i]);
+	}
 }
 
 void update_gps() {
