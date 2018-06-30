@@ -30,6 +30,8 @@ SOFTWARE.
 /* Includes */
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
+/* homemade libraries includes */
+#include "relays.h"
 
 /* Private macro */
 /* Private variables */
