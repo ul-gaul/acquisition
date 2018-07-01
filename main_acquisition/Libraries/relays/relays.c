@@ -34,4 +34,31 @@ void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint3
 	r->pin_feedback = feedback;
 	r->gpio_port = port;
 	r->port_typedef = port_typedef;
+	// initialize output pins to RESET state
+	r->port_typedef->BSRRH = r->pin_set;
+	r->port_typedef->BSRRH = r->pin_reset;
+}
+
+uint8_t set_relay(relay* r) {
+	r->port_typedef->BSRRL = r->pin_set;
+	// TODO wait 50 ms
+
+	r->port_typedef->BSRRH = r->pin_set;
+	return 0;
+}
+
+uint8_t reset_relay(relay* r) {
+	r->port_typedef->BSRRL = r->pin_reset;
+	// TODO wait 50 ms
+
+	r->port_typedef->BSRRH = r->pin_reset;
+	return 0;
+}
+
+uint8_t get_state_relay(relay* r) {
+	if((r->port_typedef->IDR & r->pin_feedback) != (uint32_t) Bit_RESET) {
+		return Bit_SET;
+	} else {
+		return Bit_RESET;
+	}
 }

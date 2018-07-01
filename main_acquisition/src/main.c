@@ -102,7 +102,6 @@ int main(void) {
 	STM_EVAL_LEDInit(LED4);
 	STM_EVAL_LEDInit(LED5);
 	STM_EVAL_LEDInit(LED6);
-
 	/* Turn on LEDs */
 	STM_EVAL_LEDOn(LED3);
 	STM_EVAL_LEDOn(LED4);
