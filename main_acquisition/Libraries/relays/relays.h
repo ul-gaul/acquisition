@@ -22,5 +22,11 @@ typedef struct {
 
 void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint32_t port, GPIO_TypeDef* port_typedef);
 
+uint8_t set_relay(relay* r);
+
+uint8_t reset_relay(relay* r);
+
+uint8_t get_state_relay(relay* r);
+
 
 #endif /* RELAYS_RELAYS_H_ */

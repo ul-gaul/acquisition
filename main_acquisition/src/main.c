@@ -32,6 +32,10 @@ SOFTWARE.
 #include "stm32f4_discovery.h"
 /* homemade libraries includes */
 #include "relays.h"
+#include "relay_remote.h"
+#include "imu10dof.h"
+#include "rf_comm.h"
+#include "gps.h"
 
 /* Private macro */
 #define SET_ACQUISITION GPIO_Pin_5
