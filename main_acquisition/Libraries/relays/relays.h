@@ -17,10 +17,10 @@ typedef struct {
 	uint32_t pin_reset;
 	uint32_t pin_feedback;
 	uint32_t gpio_port;
-	GPIO_TypeDef port_typedef;
+	GPIO_TypeDef* port_typedef;
 } relay;
 
-void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint32_t port, GPIO_TypeDef port_typedef);
+void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint32_t port, GPIO_TypeDef* port_typedef);
 
 
 #endif /* RELAYS_RELAYS_H_ */
