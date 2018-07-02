@@ -39,10 +39,14 @@ void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint3
 	r->port_typedef->BSRRH = r->pin_reset;
 }
 
+void set_delay_function(relay* r, void (*delay_function)(unsigned int)) {
+	r->delay_func = delay_function;
+}
+
 uint8_t set_relay(relay* r) {
 	r->port_typedef->BSRRL = r->pin_set;
 	// TODO wait 50 ms
-
+	r->delay_func(50);
 	r->port_typedef->BSRRH = r->pin_set;
 	return 0;
 }
@@ -50,7 +54,7 @@ uint8_t set_relay(relay* r) {
 uint8_t reset_relay(relay* r) {
 	r->port_typedef->BSRRL = r->pin_reset;
 	// TODO wait 50 ms
-
+	r->delay_func(50);
 	r->port_typedef->BSRRH = r->pin_reset;
 	return 0;
 }

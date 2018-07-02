@@ -69,7 +69,9 @@ relay* r_deploy0;
 relay* r_deploy1;
 relay* r_payload;
 /* Private function prototypes */
-/* Private functions */
+void init_tim2();
+void enable_tim2_interrupts();
+void TIM2_IRQHandler();
 
 /**
 **===========================================================================
@@ -115,9 +117,40 @@ int main(void) {
 	}
 }
 
+/* Private functions */
+
+void init_tim2() {
+	RCC_AHB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	TIM_TimeBaseInitTypeDef timerInit;
+	timerInit.TIM_Prescaler = 40000;
+	timerInit.TIM_CounterMode = TIM_CounterMode_Up;
+	timerInit.TIM_Period = 500;
+	timerInit.TIM_ClockDivision = TIM_CKD_DIV1;
+	timerInit.TIM_RepetitionCounter = 0;
+	TIM_TimeBaseInit(TIM2, &timerInit);
+	TIM_Cmd(TIM2, ENABLE);
+	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+}
+
+void enable_tim2_interrupts() {
+	NVIC_InitTypeDef nvicStructure;
+    nvicStructure.NVIC_IRQChannel = TIM2_IRQn;
+    nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    nvicStructure.NVIC_IRQChannelSubPriority = 1;
+    nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvicStructure);
+}
+
+void TIM2_IRQHandler() {
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+		// increment ms count value
+
+	}
+}
 
 /*
- * Callback used by stm32f4_discovery_audio_codec.c.
+ * Callback used by stm32f4_discovery_audio_codec.c.RCC_APB1RCC_AHB1PeriphClockCmd
  * Refer to stm32f4_discovery_audio_codec.h for more info.
  */
 void EVAL_AUDIO_TransferComplete_CallBack(uint32_t pBuffer, uint32_t Size){
