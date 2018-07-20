@@ -39,7 +39,7 @@ void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint3
 	r->port_typedef->BSRRH = r->pin_reset;
 }
 
-void set_delay_function(relay* r, void (*delay_function)(unsigned int)) {
+void set_delay_function(relay* r, void (*delay_function)(__IO uint32_t)) {
 	r->delay_func = delay_function;
 }
 

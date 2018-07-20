@@ -63,6 +63,8 @@ SOFTWARE.
 #define PORT_TYPEDEF_PAYLOAD GPIOD
 
 /* Private variables */
+// timer counter variable
+static __IO uint32_t tim2_ms_counter;
 // relay declarations
 relay* r_acquisition;
 relay* r_deploy0;
@@ -72,6 +74,8 @@ relay* r_payload;
 void init_tim2();
 void enable_tim2_interrupts();
 void TIM2_IRQHandler();
+void TIM2_ms_delay_decrement(void);
+void delay_ms(__IO uint32_t delay);
 
 /**
 **===========================================================================
@@ -99,6 +103,10 @@ int main(void) {
 	init_relay(r_deploy0, SET_DEPLOY0, RESET_DEPLOY0, FEEDBACK_DEPLOY0, PORT_DEPLOY0, PORT_TYPEDEF_DEPLOY0);
 	init_relay(r_deploy1, SET_DEPLOY1, RESET_DEPLOY1, FEEDBACK_DEPLOY1, PORT_DEPLOY1, PORT_TYPEDEF_DEPLOY1);
 	init_relay(r_payload, SET_PAYLOAD, RESET_PAYLOAD, FEEDBACK_PAYLOAD, PORT_PAYLOAD, PORT_TYPEDEF_PAYLOAD);
+	set_delay_function(r_acquisition, delay_ms);
+	set_delay_function(r_deploy0, delay_ms);
+	set_delay_function(r_deploy1, delay_ms);
+	set_delay_function(r_payload, delay_ms);
 	/* Initialize LEDs */
 	STM_EVAL_LEDInit(LED3);
 	STM_EVAL_LEDInit(LED4);
@@ -144,9 +152,18 @@ void enable_tim2_interrupts() {
 void TIM2_IRQHandler() {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-		// increment ms count value
-
+		// decrement ms count value
+		TIM2_ms_delay_decrement();
 	}
+}
+
+void TIM2_ms_delay_decrement(void) {
+	if(tim2_ms_counter > 0) tim2_ms_counter--;
+}
+
+void delay_ms(__IO uint32_t delay) {
+	tim2_ms_counter = delay;
+	while(tim2_ms_counter);
 }
 
 /*

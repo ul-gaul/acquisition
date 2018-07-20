@@ -18,12 +18,12 @@ typedef struct {
 	uint32_t pin_feedback;
 	uint32_t gpio_port;
 	GPIO_TypeDef* port_typedef;
-	void (*delay_func)(unsigned int);
+	void (*delay_func)(__IO uint32_t);
 } relay;
 
 void init_relay(relay* r, uint32_t set, uint32_t reset, uint32_t feedback, uint32_t port, GPIO_TypeDef* port_typedef);
 
-void set_delay_function(relay* r, void (*delay_function)(unsigned int));
+void set_delay_function(relay* r, void (*delay_function)(__IO uint32_t));
 
 uint8_t set_relay(relay* r);
 
