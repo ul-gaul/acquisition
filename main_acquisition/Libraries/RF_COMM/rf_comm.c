@@ -18,7 +18,7 @@ void init_rfd900() {
 	gpio_init_struct.GPIO_OType = GPIO_OType_PP;
 	gpio_init_struct.GPIO_PuPd = GPIO_PuPd_UP;
 	gpio_init_struct.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(gpio_typedef, &gpio_init_struct);
+	GPIO_Init(RFD_TYPEDEF_PORT, &gpio_init_struct);
 	// initialize USART peripheral
 	USART_InitTypeDef USART_InitStruct;
 	// enable clock for USART peripheral
@@ -42,4 +42,9 @@ void init_rfd900() {
 	// NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
 	// NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	// NVIC_Init(&NVIC_InitStruct);
+}
+
+uint32_t rfd900_write(char* src, uint32_t size) {
+
+	return 0;
 }

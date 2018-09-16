@@ -23,13 +23,13 @@
 
 /*
  * Brief:
- * 		Initialize the LEDs on the acquisition board.
+ *		Initialize the LEDs on the acquisition board.
  */
 void init_leds();
 
 /*
  * Brief:
- * 		Determines if the Pin number exists as a LED on the board.
+ *		Determines if the Pin number exists as a LED on the board.
  */
 uint8_t is_valid_led(uint32_t led_num);
 
@@ -37,8 +37,8 @@ uint8_t is_valid_led(uint32_t led_num);
  * Brief:
  *		Light the specified LED on the acquisition board.
  * Args:
- * 		led_num: The number of the LED to be lit. Must be from the defined pins
- * 			such as LEDX. Function will do nothing if the LED is invalid.
+ *		led_num: The number of the LED to be lit. Must be from the defined pins
+ *			such as LEDX. Function will do nothing if the LED is invalid.
  */
 void set_led_on(uint32_t led_num);
 
@@ -46,7 +46,7 @@ void set_led_on(uint32_t led_num);
  * Brief:
  *		Shut off the specified LED on the acquisition board.
  * Args:
- * 		led_num: The number of the LED to be shut off. Must be from the defined
+ *		led_num: The number of the LED to be shut off. Must be from the defined
  *		pins such as LEDX. Function will do nothing if the LED is invalid.
  */
 void set_led_off(uint32_t led_num);
