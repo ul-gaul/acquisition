@@ -31,8 +31,6 @@ SOFTWARE.
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 /* homemade libraries includes */
-#include "relays.h"
-#include "relay_remote.h"
 #include "imu10dof.h"
 #include "rf_comm.h"
 #include "gps.h"
