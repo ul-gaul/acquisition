@@ -20,3 +20,8 @@ void init_leds() {
 	GPIO_Init(LED_TYPEDEF_PORT, &GPIO_InitOut);
 }
 
+uint8_t is_valid_led(uint32_t led_num) {
+	return ((led_num == LED1) || (led_num == LED2) || (led_num == LED3) ||
+		(led_num == LED4) || (led_num == LED5) || (led_num == LED6));
+}
+

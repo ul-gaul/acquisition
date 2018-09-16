@@ -27,4 +27,10 @@
  */
 void init_leds();
 
+/*
+ * Brief:
+ * 		Determines if the Pin number exists as a LED on the board.
+ */
+uint8_t is_valid_led(uint32_t led_num);
+
 #endif /* LEDS_LEDS_H_ */
