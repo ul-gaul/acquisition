@@ -25,3 +25,14 @@ uint8_t is_valid_led(uint32_t led_num) {
 		(led_num == LED4) || (led_num == LED5) || (led_num == LED6));
 }
 
+void set_led_on(uint32_t led_num) {
+	if(is_valid_led(led_num)) {
+		GPIO_SetBits(LED_TYPEDEF_PORT, led_num);
+	}
+}
+
+void set_led_off(uint32_t led_num) {
+	if(is_valid_led(led_num)) {
+		GPIO_ResetBits(LED_TYPEDEF_PORT, led_num);
+	}
+}

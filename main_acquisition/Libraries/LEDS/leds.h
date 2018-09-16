@@ -33,4 +33,22 @@ void init_leds();
  */
 uint8_t is_valid_led(uint32_t led_num);
 
+/*
+ * Brief:
+ *		Light the specified LED on the acquisition board.
+ * Args:
+ * 		led_num: The number of the LED to be lit. Must be from the defined pins
+ * 			such as LEDX. Function will do nothing if the LED is invalid.
+ */
+void set_led_on(uint32_t led_num);
+
+/*
+ * Brief:
+ *		Shut off the specified LED on the acquisition board.
+ * Args:
+ * 		led_num: The number of the LED to be shut off. Must be from the defined
+ *		pins such as LEDX. Function will do nothing if the LED is invalid.
+ */
+void set_led_off(uint32_t led_num);
+
 #endif /* LEDS_LEDS_H_ */
