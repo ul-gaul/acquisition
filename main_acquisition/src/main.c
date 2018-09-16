@@ -69,6 +69,13 @@ int main(void) {
 	*/
 
 	/* TODO - Add your application code here */
+	init_leds();
+	set_led_on(LED1);
+	set_led_on(LED2);
+	set_led_on(LED3);
+	set_led_off(LED4);
+	set_led_off(LED5);
+	set_led_off(LED6);
 
 	/* Infinite loop */
 	while (1)
