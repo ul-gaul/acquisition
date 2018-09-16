@@ -34,40 +34,13 @@ SOFTWARE.
 #include "imu10dof.h"
 #include "rf_comm.h"
 #include "gps.h"
+#include "leds.h"
 
 /* Private macro */
-#define SET_ACQUISITION GPIO_Pin_5
-#define RESET_ACQUISITION GPIO_Pin_6
-#define FEEDBACK_ACQUISITION GPIO_Pin_4
-#define PORT_ACQUISITION RCC_AHB1Periph_GPIOE
-#define PORT_TYPEDEF_ACQUISITION GPIOE
-
-#define SET_DEPLOY0 GPIO_Pin_2
-#define RESET_DEPLOY0 GPIO_Pin_1
-#define FEEDBACK_DEPLOY0 GPIO_Pin_6
-#define PORT_DEPLOY0 RCC_AHB1Periph_GPIOD
-#define PORT_TYPEDEF_DEPLOY0 GPIOD
-
-#define SET_DEPLOY1 GPIO_Pin_0
-#define RESET_DEPLOY1 GPIO_Pin_1
-#define FEEDBACK_DEPLOY1 GPIO_Pin_2
-#define PORT_DEPLOY1 RCC_AHB1Periph_GPIOE
-#define PORT_TYPEDEF_DEPLOY1 GPIOE
-
-#define SET_PAYLOAD GPIO_Pin_0
-#define RESET_PAYLOAD GPIO_Pin_1
-#define FEEDBACK_PAYLOAD GPIO_Pin_7
-#define PORT_PAYLOAD RCC_AHB1Periph_GPIOD
-#define PORT_TYPEDEF_PAYLOAD GPIOD
 
 /* Private variables */
 // timer counter variable
 static __IO uint32_t tim2_ms_counter;
-// relay declarations
-relay* r_acquisition;
-relay* r_deploy0;
-relay* r_deploy1;
-relay* r_payload;
 /* Private function prototypes */
 void init_tim2();
 void enable_tim2_interrupts();
@@ -96,25 +69,6 @@ int main(void) {
 	*/
 
 	/* TODO - Add your application code here */
-	// initialize relays
-	init_relay(r_acquisition, SET_ACQUISITION, RESET_ACQUISITION, FEEDBACK_ACQUISITION, PORT_ACQUISITION, PORT_TYPEDEF_ACQUISITION);
-	init_relay(r_deploy0, SET_DEPLOY0, RESET_DEPLOY0, FEEDBACK_DEPLOY0, PORT_DEPLOY0, PORT_TYPEDEF_DEPLOY0);
-	init_relay(r_deploy1, SET_DEPLOY1, RESET_DEPLOY1, FEEDBACK_DEPLOY1, PORT_DEPLOY1, PORT_TYPEDEF_DEPLOY1);
-	init_relay(r_payload, SET_PAYLOAD, RESET_PAYLOAD, FEEDBACK_PAYLOAD, PORT_PAYLOAD, PORT_TYPEDEF_PAYLOAD);
-	set_delay_function(r_acquisition, delay_ms);
-	set_delay_function(r_deploy0, delay_ms);
-	set_delay_function(r_deploy1, delay_ms);
-	set_delay_function(r_payload, delay_ms);
-	/* Initialize LEDs */
-	STM_EVAL_LEDInit(LED3);
-	STM_EVAL_LEDInit(LED4);
-	STM_EVAL_LEDInit(LED5);
-	STM_EVAL_LEDInit(LED6);
-	/* Turn on LEDs */
-	STM_EVAL_LEDOn(LED3);
-	STM_EVAL_LEDOn(LED4);
-	STM_EVAL_LEDOn(LED5);
-	STM_EVAL_LEDOn(LED6);
 
 	/* Infinite loop */
 	while (1)
