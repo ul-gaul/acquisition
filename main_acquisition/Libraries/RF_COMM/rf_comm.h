@@ -8,6 +8,9 @@
 #ifndef RF_COMM_RF_COMM_H_
 #define RF_COMM_RF_COMM_H_
 
+// set this flag to 1 to enable UART reception
+#define RX_ENABLE 0
+
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 

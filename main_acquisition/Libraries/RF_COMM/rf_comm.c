@@ -32,16 +32,17 @@ void init_rfd900() {
 	USART_InitStruct.USART_WordLength = USART_WordLength_8b;
 	USART_Init(RFD_USART_PERIPH_TYPEDEF, &USART_InitStruct);
 	USART_Cmd(RFD_USART_PERIPH_TYPEDEF, ENABLE);
-	// NOTE: uncomment this section if RX is used and interrupts are required
-	// NVIC_InitTypeDef NVIC_InitStruct;
-	// enable RX interrupt
-	// USART_ITConfig(RFD_USART_PERIPH_TYPEDEF, USART_IT_RXNE, ENABLE);
-	// initialize NVIC for RX interrupts
-	// NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
-	// NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	// NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
-	// NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
-	// NVIC_Init(&NVIC_InitStruct);
+#if RX_ENABLE
+	NVIC_InitTypeDef NVIC_InitStruct;
+	enable RX interrupt
+	USART_ITConfig(RFD_USART_PERIPH_TYPEDEF, USART_IT_RXNE, ENABLE);
+	initialize NVIC for RX interrupts
+	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
+	NVIC_Init(&NVIC_InitStruct);
+#endif /* RX_ENABLE */
 }
 
 uint32_t rfd900_write(char* src, uint32_t size) {
