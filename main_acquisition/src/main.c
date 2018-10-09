@@ -68,7 +68,7 @@ int main(void) {
 	*  E.g.  SCB->VTOR = 0x20000000;
 	*/
 
-	/* TODO - Add your application code here */
+	/* Application code goes here */
 	init_leds();
 	set_led_on(LED1);
 	set_led_on(LED2);
@@ -78,9 +78,13 @@ int main(void) {
 	set_led_off(LED6);
 
 	/* Infinite loop */
-	while (1)
-	{
-		i++;
+
+	unsigned char test_str[4] = "test";
+	while (1) {
+		rfd900_write(test_str, 4);
+		set_led_off(LED1);
+		rfd900_write(test_str, 4);
+		set_led_on(LED1);
 	}
 }
 

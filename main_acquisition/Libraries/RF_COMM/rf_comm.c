@@ -45,7 +45,8 @@ void init_rfd900() {
 #endif /* RX_ENABLE */
 }
 
-uint32_t rfd900_write(char* src, uint32_t size) {
-
-	return 0;
+void rfd900_write(uint8_t* src, uint16_t size) {
+	for(uint32_t i = 0; i < size; i++) {
+		USART_SendData(USART3, src[i]);
+	}
 }

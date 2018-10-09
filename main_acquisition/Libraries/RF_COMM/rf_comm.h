@@ -13,6 +13,7 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
+#include <stm32f4xx_usart.h>
 
 
 #define RFD_PORT RCC_AHB1Periph_GPIOD
@@ -35,6 +36,6 @@ void init_rfd900();
  * Return:
  *		The number of bytes sent.
  */
-uint32_t rfd900_write(char* src, uint32_t size);
+void rfd900_write(uint8_t* src, uint16_t size);
 
 #endif /* RF_COMM_RF_COMM_H_ */
