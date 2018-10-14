@@ -21,9 +21,20 @@ on est assurés que le code est exécuté.
 
     Tests de développement
 
+Dans le *main*, initialiser les LEDs à l'aide de la fonction *init_leds* et
+ajouter des calls aux fonctions *set_led_on* et *set_led_off*. Ensuite, utiliser
+le mode debug de l'IDE utilisé pour s'assurer que **toutes** les LEDs ont le
+comportement prévu, selon le tableau suivant:
+
+==================== ===========================
+Fonction appelée     Comportement prévu
+==================== ===========================
+*set_led_on(LEDX)*   La LED numéro X est allumée
+*set_led_off(LEDX)*  La LED numéro X est éteinte
+==================== ===========================
 
     Tests en intégration
-
+.. TODO
 
 Communication RF
 ----------------
