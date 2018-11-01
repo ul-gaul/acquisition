@@ -35,6 +35,8 @@ SOFTWARE.
 #include "rf_comm.h"
 #include "gps.h"
 #include "leds.h"
+#include "valve.h"
+#include "rocket_packet.h"
 
 /* Private macro */
 
@@ -56,7 +58,6 @@ void delay_ms(__IO uint32_t delay);
 **===========================================================================
 */
 int main(void) {
-	int i = 0;
 
 	/**
 	*  IMPORTANT NOTE!
