@@ -12,7 +12,11 @@ void serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	 * copy the rocket packet struct into the destination char array
 	 */
 	unsigned int offset = 0;
+	char start_char = 's';
 
+	// start char
+	memcpy(dst + offset, (void *) &start_char, sizeof(char));
+	offset += sizeof(char);
 	// timestamp
 	memcpy(dst + offset, (void *) &pkt->data.timestamp, sizeof(pkt->data.timestamp));
 	offset += sizeof(pkt->data.timestamp);

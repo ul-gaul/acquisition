@@ -38,8 +38,9 @@ typedef struct {
 } RocketData;
 
 typedef struct {
+	char start_char;
 	RocketData data;
-	unsigned short checksum;
+	uint8_t checksum;
 } RocketPacket;
 
 void serialize_rocket_packet(RocketPacket* pkt, uint8_t* s);
