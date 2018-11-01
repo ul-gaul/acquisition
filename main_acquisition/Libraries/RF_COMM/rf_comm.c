@@ -50,3 +50,8 @@ void rfd900_write(uint8_t* src, uint16_t size) {
 		USART_SendData(USART3, src[i]);
 	}
 }
+
+void rfd900_send_packet(RocketPacket* pkt) {
+	serialize_rocket_packet(pkt, rocket_packet_serialized);
+	rfd900_write(rocket_packet_serialized, ROCKET_PACKET_SIZE);
+}

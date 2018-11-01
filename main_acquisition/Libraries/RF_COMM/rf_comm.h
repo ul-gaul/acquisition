@@ -15,6 +15,7 @@
 #include "stm32f4_discovery.h"
 #include <stm32f4xx_usart.h>
 
+#include "rocket_packet.h"
 
 #define RFD_PORT RCC_AHB1Periph_GPIOD
 #define RFD_TYPEDEF_PORT GPIOD
@@ -23,6 +24,9 @@
 #define RFD_TX GPIO_Pin_8
 #define RFD_RX GPIO_Pin_9
 #define RFD_BAUDRATE 9600
+
+
+uint8_t rocket_packet_serialized[ROCKET_PACKET_SIZE];
 
 /*
  * Brief:
@@ -37,5 +41,7 @@ void init_rfd900();
  *		The number of bytes sent.
  */
 void rfd900_write(uint8_t* src, uint16_t size);
+
+void rfd900_send_packet(RocketPacket* pkt);
 
 #endif /* RF_COMM_RF_COMM_H_ */

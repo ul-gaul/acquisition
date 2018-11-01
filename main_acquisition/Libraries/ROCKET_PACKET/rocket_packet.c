@@ -7,7 +7,7 @@
 
 #include "rocket_packet.h"
 
-void serialize_rocket_packet(RocketPacket* pkt, char* dst) {
+void serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	/*
 	 * copy the rocket packet struct into the destination char array
 	 */
