@@ -443,3 +443,6 @@ local.properties
 
 # remove html from doc
 doc/*html
+
+# code review properties
+*.code_review_properties
