@@ -1,13 +1,43 @@
 /*
  * gps.h
  *
- *  Created on: Jul 1, 2018
- *      Author: laplace
+ *  Created on: November 1, 2018
+ *      Author: Guy-Philippe Nadon
  */
 
 #ifndef GPS_GPS_H_
 #define GPS_GPS_H_
 
 
+
+#define RX_ENABLE 1
+
+
+#include "stm32f4xx.h"
+#include "stm32f4_discovery.h"
+#include <stm32f4xx_usart.h>
+#include <stdlib.h>
+
+#define RFD_PORTgps RCC_AHB1Periph_GPIOA
+#define RFD_TYPEDEF_PORTgps GPIOA
+#define RFD_USART_PERIPHgps RCC_APB2Periph_USART1
+#define RFD_USART_PERIPH_TYPEDEFgps USART1
+#define RFD_TXgps GPIO_Pin_9
+#define RFD_RXgps GPIO_Pin_10
+#define RFD_BAUDRATEgps 9600
+
+typedef struct {
+	// GPS values
+	float latitude;
+	float longitude;
+	char NSIndicator;
+	char EWIndicator;
+} gpsData;
+
+void initGps(void);
+uint8_t Serial_GetByte(USART_TypeDef *USARTx);
+void gpsGet();
+
+void updateGps(gpsData* gpsStruct);
 
 #endif /* GPS_GPS_H_ */
