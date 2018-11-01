@@ -34,9 +34,9 @@ void init_rfd900() {
 	USART_Cmd(RFD_USART_PERIPH_TYPEDEF, ENABLE);
 #if RX_ENABLE
 	NVIC_InitTypeDef NVIC_InitStruct;
-	enable RX interrupt
+	// enable RX interrupt
 	USART_ITConfig(RFD_USART_PERIPH_TYPEDEF, USART_IT_RXNE, ENABLE);
-	initialize NVIC for RX interrupts
+	// initialize NVIC for RX interrupts
 	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
