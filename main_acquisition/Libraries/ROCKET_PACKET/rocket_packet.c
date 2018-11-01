@@ -12,6 +12,7 @@ void serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	 * copy the rocket packet struct into the destination char array
 	 */
 	unsigned int offset = 0;
+
 	// timestamp
 	memcpy(dst + offset, (void *) &pkt->data.timestamp, sizeof(pkt->data.timestamp));
 	offset += sizeof(pkt->data.timestamp);
@@ -46,6 +47,9 @@ void serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	// motor values
 	memcpy(dst + offset, (void*) &pkt->data.tank_pressure, sizeof(pkt->data.tank_pressure));
 	offset += sizeof(pkt->data.tank_pressure);
+	memcpy(dst + offset, (void*) &pkt->data.valve_state, sizeof(pkt->data.valve_state));
+	offset += sizeof(pkt->data.valve_state);
+
 	// compute checksum
 	pkt->checksum = 0;
 	for(int i = 0; i < offset; i++) {

@@ -13,7 +13,7 @@
 #define ROCKET_PACKET_ROCKET_PACKET_H_
 
 // size of the packet including the checksum
-#define ROCKET_PACKET_SIZE 61
+#define ROCKET_PACKET_SIZE 62
 
 typedef struct {
 	unsigned long timestamp;
@@ -34,6 +34,7 @@ typedef struct {
 	float z_gyro;
 	// motor values
 	float tank_pressure;
+	uint8_t valve_state;
 } RocketData;
 
 typedef struct {
