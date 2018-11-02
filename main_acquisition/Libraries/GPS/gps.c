@@ -67,14 +67,19 @@ uint8_t Serial_GetByte(USART_TypeDef *USARTx)
 }
 
 
-void PA10_Serial_ReadLine(unsigned char *uCharArray, unsigned int ArraySize)
+void PA10_Serial_ReadLine(unsigned char *uCharArray, unsigned int ArraySize) //modify the received char array/string to something of the form of $XXXXXXXXXXXXXXX\n
 {
-    unsigned char currentChar = Serial_GetByte(USART1);
+    unsigned char currentChar;
+	do
+    {
+		currentChar = Serial_GetByte(USART1);
+    }while(currentChar != '$');
     unsigned char ii = 0;
     while(currentChar != '\n' || ii < ArraySize)
     {
     	uCharArray[ii] = currentChar;
     	ii++;
+    	currentChar = Serial_GetByte(USART1);
     }
     //do not flush data :
     //GPRMC
@@ -86,9 +91,9 @@ void PA10_Serial_ReadLine(unsigned char *uCharArray, unsigned int ArraySize)
 
 void updateGps(gpsData *gpsStruct)
 {
-    unsigned char gpsDataString[80] = {0};
-	PA10_Serial_ReadLine(gpsDataString, 80);
-	if(gpsDataString[5] == 'L')
+    unsigned char gpsDataString[80] = {0}; //important to put the array size from here
+	PA10_Serial_ReadLine(gpsDataString, 80); // into this function right there
+	if(gpsDataString[5] == 'L') // String parsing section si GPGLL
 	{
 		unsigned char subsetLatitude[20] = {0};
 		unsigned char currentStart = 7;
@@ -108,7 +113,7 @@ void updateGps(gpsData *gpsStruct)
 			}
 			i++;
 		}
-		gpsStruct->latitude = (float)atof((char)subsetLatitude);
+		gpsStruct->latitude = (float)(atof(((char)subsetLatitude)));
 		gpsStruct->NSIndicator = gpsDataString[currentStart]; // la position retourne sois N ou S
 		currentStart += 2; // +2 because you move past the comma and get the first position of the longitude
 		GTFO = 0;
@@ -127,7 +132,7 @@ void updateGps(gpsData *gpsStruct)
 			}
 			i++;
 		}
-		gpsStruct->longitude = (float)atof((char)subsetLatitude);
+		gpsStruct->longitude = (float)atof(((char)subsetLatitude));
 		gpsStruct->EWIndicator = gpsDataString[currentStart]; // la position retourne sois E ou W
 	}
 }
