@@ -71,6 +71,7 @@ int main(void) {
 
 	/* Application code goes here */
 	init_leds();
+	init_valve();
 	set_led_on(LED1);
 	set_led_on(LED2);
 	set_led_on(LED3);
@@ -79,9 +80,13 @@ int main(void) {
 	set_led_off(LED6);
 
 	/* Infinite loop */
-
+	uint16_t ledstate;
 	unsigned char test_str[4] = "test";
 	while (1) {
+		set_valve_on();
+		get_valve_state();
+		set_valve_off();
+		get_valve_state();
 		rfd900_write(test_str, 4);
 		set_led_off(LED1);
 		rfd900_write(test_str, 4);
