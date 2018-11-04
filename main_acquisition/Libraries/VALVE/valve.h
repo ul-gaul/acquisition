@@ -18,6 +18,8 @@
 #define VALVE_TYPEDEF_PORT GPIOE
 #define VALVE_GPIO GPIO_Pin_9
 #define VALVE_GPIO_PIN_NUMBER 9
+#define VALVE_ON_BYTE 0xA0
+#define VALVE_OFF_BYTE 0xB0
 
 /*
  * Brief:
