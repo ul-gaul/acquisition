@@ -89,14 +89,57 @@ void PA10_Serial_ReadLine(unsigned char *uCharArray, unsigned int ArraySize) //m
     //flush anything that isn't one of the previous data
 }
 
+
 void updateGps(gpsData *gpsStruct)
 {
     unsigned char gpsDataString[80] = {0}; //important to put the array size from here
 	PA10_Serial_ReadLine(gpsDataString, 80); // into this function right there
-	if(gpsDataString[5] == 'L') // String parsing section si GPGLL
+	unsigned char getIn = 0;
+	unsigned char currentStart = 7; //Cette variable est l'index qui indique la premiere position de la latitude dans le gpsDataString array
+	if(gpsDataString[4] == 'G') // check if data is GPGGA
+	{
+		getIn = 1;
+		unsigned char i = 0;
+		unsigned char GTFO = 0;
+		while(i < 20 || GTFO == 0)
+		{
+			unsigned char temp = gpsDataString[currentStart+i];
+			if(temp == ',')
+			{
+				currentStart += i + 1; // valeur qui faut starter pour avoir dequoi de pertinent
+				// + 1 car je vais a la premiere position de la donner de latitude
+				//string ex : "$GPGGA,111636.932,2447.0949,N,12100.5223,E,1,11,0.8,118.2,M,,,,0000*02<CR><LF>"
+				GTFO = 1;
+			}
+			i++;
+		}
+	}
+	else if(gpsDataString[4] == 'M') // check if data is GPGMR
+	{
+		getIn = 1;
+		unsigned char i = 0;
+		unsigned char GTFO = 0;
+		while(i < 20 || GTFO == 0)
+		{
+			unsigned char temp = gpsDataString[currentStart+i];
+			if(temp == ',')
+			{
+				currentStart += i + 3; // valeur qui faut starter pour avoir dequoi de pertinent
+				// + 3 car je saute l'octet de status (le "A" dans l'exemple)
+				//string ex : "$GPRMC,111636.932,A,2447.0949,N,12100.5223,E,000.0,000.0,030407,,,A*61<CR><LF>"
+				GTFO = 1;
+			}
+			i++;
+		}
+	}
+	else if(gpsDataString[5] == 'L') // check if data is GPGLL
+	{
+		getIn = 1;
+		currentStart = 7;
+	}
+	if(getIn == 1) // String parsing section si dans gpsDataString on a GPRMC GPGLL GPGGA
 	{
 		unsigned char subsetLatitude[20] = {0};
-		unsigned char currentStart = 7;
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
 		while(i < 20 || GTFO == 0)
@@ -113,7 +156,7 @@ void updateGps(gpsData *gpsStruct)
 			}
 			i++;
 		}
-		gpsStruct->latitude = (float)(atof(((char)subsetLatitude)));
+		gpsStruct->latitude = atof((char *)subsetLatitude);
 		gpsStruct->NSIndicator = gpsDataString[currentStart]; // la position retourne sois N ou S
 		currentStart += 2; // +2 because you move past the comma and get the first position of the longitude
 		GTFO = 0;
@@ -132,7 +175,7 @@ void updateGps(gpsData *gpsStruct)
 			}
 			i++;
 		}
-		gpsStruct->longitude = (float)atof(((char)subsetLatitude));
+		gpsStruct->longitude = (float)atof((char *)subsetLatitude);
 		gpsStruct->EWIndicator = gpsDataString[currentStart]; // la position retourne sois E ou W
 	}
 }
