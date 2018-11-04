@@ -78,6 +78,8 @@ int main(void) {
 	set_led_off(LED4);
 	set_led_off(LED5);
 	set_led_off(LED6);
+	initGps();// activate USART1 on PA9 (TX) and PA10 (RX)
+	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
 	/* Infinite loop */
 	uint16_t ledstate;
@@ -91,6 +93,7 @@ int main(void) {
 		set_led_off(LED1);
 		rfd900_write(test_str, 4);
 		set_led_on(LED1);
+		updateGps(&gpsDataStruct);
 	}
 }
 
