@@ -143,6 +143,14 @@ void SysTick_Handler(void)
 /*  TimingDelay_Decrement(); */
 }
 
+//void TIM9_IRQHandler() {
+//	if (TIM_GetITStatus(TIM9, TIM_IT_Update) != RESET) {
+//		TIM_ClearITPendingBit(TIM9, TIM_IT_Update);
+//		// decrement ms count value
+//		TIM9_ms_delay_decrement();
+//	}
+//}
+
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
