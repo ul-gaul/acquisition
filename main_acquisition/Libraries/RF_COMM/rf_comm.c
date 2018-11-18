@@ -16,8 +16,8 @@ void init_rfd900() {
 	gpio_init_struct.GPIO_Pin = RFD_RX | RFD_TX;
 	gpio_init_struct.GPIO_Mode = GPIO_Mode_AF;
 	gpio_init_struct.GPIO_OType = GPIO_OType_PP;
-	gpio_init_struct.GPIO_PuPd = GPIO_PuPd_UP;
-	gpio_init_struct.GPIO_Speed = GPIO_Speed_100MHz;
+	gpio_init_struct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(RFD_TYPEDEF_PORT, &gpio_init_struct);
 	// initialize USART peripheral
 	USART_InitTypeDef USART_InitStruct;
@@ -31,7 +31,6 @@ void init_rfd900() {
 	USART_InitStruct.USART_StopBits = USART_StopBits_1;
 	USART_InitStruct.USART_WordLength = USART_WordLength_8b;
 	USART_Init(RFD_USART_PERIPH_TYPEDEF, &USART_InitStruct);
-	USART_Cmd(RFD_USART_PERIPH_TYPEDEF, ENABLE);
 #if RX_ENABLE
 	NVIC_InitTypeDef NVIC_InitStruct;
 	// enable RX interrupt
@@ -39,10 +38,11 @@ void init_rfd900() {
 	// initialize NVIC for RX interrupts
 	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 5;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	NVIC_Init(&NVIC_InitStruct);
 #endif /* RX_ENABLE */
+	USART_Cmd(RFD_USART_PERIPH_TYPEDEF, ENABLE);
 }
 
 void rfd900_write(uint8_t* src, uint16_t size) {

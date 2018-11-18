@@ -29,7 +29,10 @@ void set_valve_off() {
 }
 
 uint8_t get_valve_state() {
-	uint16_t a;
-	a = VALVE_TYPEDEF_PORT->ODR;
-	return 0;
+	return (uint8_t) (
+		(
+			(1 << VALVE_GPIO_PIN_NUMBER)
+			& VALVE_TYPEDEF_PORT->ODR
+		) >> VALVE_GPIO_PIN_NUMBER
+	);
 }

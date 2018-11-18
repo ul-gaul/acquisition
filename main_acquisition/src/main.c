@@ -49,6 +49,7 @@ void enable_tim2_interrupts();
 void TIM2_IRQHandler();
 void TIM2_ms_delay_decrement(void);
 void delay_ms(__IO uint32_t delay);
+void USART3_IRQHANDLER();
 
 /**
 **===========================================================================
@@ -82,18 +83,18 @@ int main(void) {
 	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
 	/* Infinite loop */
-	uint16_t ledstate;
+	uint8_t ledstate;
 	unsigned char test_str[4] = "test";
 	while (1) {
 		set_valve_on();
-		get_valve_state();
+		ledstate = get_valve_state();
 		set_valve_off();
-		get_valve_state();
+		ledstate = get_valve_state();
 		rfd900_write(test_str, 4);
 		set_led_off(LED1);
 		rfd900_write(test_str, 4);
 		set_led_on(LED1);
-		updateGps(&gpsDataStruct);
+//		updateGps(&gpsDataStruct);
 	}
 }
 
@@ -136,6 +137,18 @@ void TIM2_ms_delay_decrement(void) {
 void delay_ms(__IO uint32_t delay) {
 	tim2_ms_counter = delay;
 	while(tim2_ms_counter);
+}
+
+void USART3_IRQHANDLER() {
+	char byte_rx;
+	if(USART_GetITStatus(RFD_USART_PERIPH_TYPEDEF, USART_IT_RXNE)) {
+		byte_rx = USART_ReceiveData(RFD_USART_PERIPH_TYPEDEF);
+		if(byte_rx == VALVE_ON_BYTE) {
+			set_valve_on();
+		} else if (byte_rx == VALVE_OFF_BYTE) {
+			set_valve_off();
+		}
+	}
 }
 
 /*
