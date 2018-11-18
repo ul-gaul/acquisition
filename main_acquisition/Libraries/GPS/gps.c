@@ -62,18 +62,18 @@ void initGps(void)
 
 uint8_t Serial_GetByte(USART_TypeDef *USARTx)
 {
-    while (USART_GetFlagStatus(USARTx, USART_FLAG_RXNE) == RESET);
-    return USART_ReceiveData(USARTx);
+	  while (!(USART1->SR & USART_FLAG_RXNE));
+	  return ((int)(USART1->DR & 0x1FF));
 }
 
 
 void PA10_Serial_ReadLine(unsigned char *uCharArray, unsigned int ArraySize) //modify the received char array/string to something of the form of $XXXXXXXXXXXXXXX\n
 {
-    unsigned char currentChar;
+    unsigned char currentChar = 0;
 	do
     {
 		currentChar = Serial_GetByte(USART1);
-    }while(currentChar != '$');
+    }while(currentChar != '$'); //rajouter un timeout
     unsigned char ii = 0;
     while(currentChar != '\n' || ii < ArraySize)
     {
@@ -89,6 +89,10 @@ void PA10_Serial_ReadLine(unsigned char *uCharArray, unsigned int ArraySize) //m
     //flush anything that isn't one of the previous data
 }
 
+unsigned char customSplit()
+{
+	return 1;
+}
 
 void updateGps(gpsData *gpsStruct)
 {
