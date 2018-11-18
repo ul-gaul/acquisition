@@ -27,6 +27,20 @@
 #define RFD_RXgps GPIO_Pin_10
 #define RFD_BAUDRATEgps 115200
 
+/* Receive buffer for DMA */
+#define DMA_RX_BUFFER_SIZE          128
+uint8_t DMA_RX_Buffer[DMA_RX_BUFFER_SIZE];
+
+/* Buffer after received data */
+#define UART_BUFFER_SIZE            256
+uint8_t UART_Buffer[UART_BUFFER_SIZE];
+size_t Write, Read;
+
+USART_InitTypeDef USART_InitStruct;
+DMA_InitTypeDef DMA_InitStruct;
+GPIO_InitTypeDef GPIO_InitStruct;
+NVIC_InitTypeDef NVIC_InitStruct;
+
 typedef struct {
 	// GPS values
 	float latitude;
@@ -34,9 +48,9 @@ typedef struct {
 	char NSIndicator;
 	char EWIndicator;
 } gpsData;
-
+void DMA1_Stream5_IRQHandler(void);
+void USART1_IRQHandler(void);
 void initGps(void);
-uint8_t Serial_GetByte(USART_TypeDef *USARTx);
 unsigned char customSplit();
 void updateGps(gpsData* gpsStruct);
 
