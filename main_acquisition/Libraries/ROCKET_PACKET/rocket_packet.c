@@ -12,7 +12,7 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	 * copy the rocket packet struct into the destination char array
 	 */
 	unsigned int offset = 0;
-	char start_char = 's';
+	char start_char = ROCKET_PACKET_START;
 
 	// start char
 	memcpy(dst + offset, (void *) &start_char, sizeof(char));
@@ -48,11 +48,6 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	offset += sizeof(pkt->data.y_gyro);
 	memcpy(dst + offset, (void *) &pkt->data.z_gyro, sizeof(pkt->data.z_gyro));
 	offset += sizeof(pkt->data.z_gyro);
-	// motor values
-	memcpy(dst + offset, (void*) &pkt->data.tank_pressure, sizeof(pkt->data.tank_pressure));
-	offset += sizeof(pkt->data.tank_pressure);
-	memcpy(dst + offset, (void*) &pkt->data.valve_state, sizeof(pkt->data.valve_state));
-	offset += sizeof(pkt->data.valve_state);
 
 	// compute checksum
 	pkt->checksum = 0;

@@ -67,12 +67,36 @@ int main(void) {
 
 	/* Infinite loop */
 	uint8_t ledstate;
-	unsigned char test_str[4] = "test";
+	// writing test rocket data and packet
+	RocketData rd;
+	rd.timestamp = 0;
+	rd.latitude = 46.779013;
+	rd.longitude = -71.276001;
+	rd.altitude = 10000.1;
+	rd.temperature = 25.7;
+	rd.x_accel = 1.56;
+	rd.y_accel = 2.45;
+	rd.z_accel = 3.91;
+	rd.x_magnet = 11.12;
+	rd.y_magnet = 12.34;
+	rd.z_magnet = 13.56;
+	rd.x_gyro = 21.12;
+	rd.y_gyro = 22.34;
+	rd.z_gyro = 23.56;
+	RocketPacket rp;
+	rp.start_char = ROCKET_PACKET_START;
+	rp.data = rd;
+	rp.checksum = 0;
+
+	unsigned int num_bytes;
+	uint8_t rp_buffer[ROCKET_PACKET_SIZE];
+	num_bytes = serialize_rocket_packet(&rp, rp_buffer);
+
 	while (1) {
-		rfd900_write(test_str, 4);
+		rfd900_write(rp_buffer, num_bytes);
 		delay_ms(500);
 		set_led_off(LED1);
-		rfd900_write(test_str, 4);
+		rfd900_write(rp_buffer, num_bytes);
 		delay_ms(500);
 		set_led_on(LED1);
 //		updateGps(&gpsDataStruct);
