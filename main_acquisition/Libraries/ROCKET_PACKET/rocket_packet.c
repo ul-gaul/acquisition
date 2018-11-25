@@ -7,7 +7,7 @@
 
 #include "rocket_packet.h"
 
-void serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
+unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	/*
 	 * copy the rocket packet struct into the destination char array
 	 */
@@ -61,4 +61,6 @@ void serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	}
 	pkt->checksum = ~pkt->checksum;
 	memcpy(dst + offset, (void *) &pkt->checksum, sizeof(pkt->checksum));
+	offset += sizeof(pkt->checksum);
+	return offset;
 }

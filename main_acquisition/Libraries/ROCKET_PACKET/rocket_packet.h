@@ -43,6 +43,6 @@ typedef struct {
 	uint8_t checksum;
 } RocketPacket;
 
-void serialize_rocket_packet(RocketPacket* pkt, uint8_t* s);
+unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* s);
 
 #endif /* ROCKET_PACKET_ROCKET_PACKET_H_ */
