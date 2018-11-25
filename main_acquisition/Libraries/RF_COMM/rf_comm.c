@@ -55,6 +55,7 @@ void init_rfd900() {
 
 void rfd900_write(uint8_t* src, uint16_t size) {
 	for(uint32_t i = 0; i < size; i++) {
+		while(!(USART3->SR & USART_FLAG_TXE));
 		USART_SendData(USART3, src[i]);
 	}
 }
