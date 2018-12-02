@@ -94,7 +94,16 @@ int main(void) {
 		set_led_off(LED1);
 		rfd900_write(test_str, 4);
 		set_led_on(LED1);
-//		updateGps(&gpsDataStruct);
+		//Cette partie transfer les donnee recus dans le buffer ou les donnees sont "stocker"
+        while (Read != Write) {                 /* Do it until buffer is empty */
+            USART1->DR = UART_Buffer[Read++];   /* Start byte transfer */
+            while (!(USART1->SR & USART_SR_TXE));   /* Wait till finished */
+            if (Read == UART_BUFFER_SIZE) {     /* Check buffer overflow */
+                Read = 0;
+            }
+        }
+        //fonction qui met a jour les donner dans le gpsDataStruct
+		updateGps(&gpsDataStruct);
 	}
 }
 

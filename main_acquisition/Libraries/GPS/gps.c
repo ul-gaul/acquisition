@@ -19,10 +19,10 @@ void initGps(void)
 	SystemInit();
 
     /* Init GPIO pins for UART */
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_DMA1EN;
-    RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_DMA2EN;
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
     (void)RCC->AHB1ENR;
-    (void)RCC->APB1ENR;
+    (void)RCC->APB2ENR;
 
     /* Set alternate functions */
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
@@ -71,18 +71,18 @@ void initGps(void)
     DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
     DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
     DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-    DMA_Init(DMA1_Stream5, &DMA_InitStruct);
+    DMA_Init(DMA2_Stream5, &DMA_InitStruct);
 
     /* Enable global interrupts for DMA stream */
-    NVIC_InitStruct.NVIC_IRQChannel = DMA1_Stream5_IRQn;
+    NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream5_IRQn;
     NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
     NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
     NVIC_Init(&NVIC_InitStruct);
 
     /* Enable transfer complete interrupt */
-    DMA_ITConfig(DMA1_Stream5, DMA_IT_TC, ENABLE);
-    DMA_Cmd(DMA1_Stream5, ENABLE);
+    DMA_ITConfig(DMA2_Stream5, DMA_IT_TC, ENABLE);
+    DMA_Cmd(DMA2_Stream5, ENABLE);
 }
 
 void USART_Parser(unsigned char *uCharArray, unsigned int ArraySize) //modify the received char array/string to something of the form of $XXXXXXXXXXXXXXX\n
@@ -95,14 +95,14 @@ void USART_Parser(unsigned char *uCharArray, unsigned int ArraySize) //modify th
 		currentChar = UART_Buffer[i];
 		++i;
     }while(currentChar != '$' && i < UART_BUFFER_SIZE);
+	--i;
 	if(i >= UART_BUFFER_SIZE)
 	{
 		getOut = 1;
 	}
-	--i;
-	currentChar = UART_Buffer[i];
+	//currentChar = UART_Buffer[i];
     unsigned char ii = 0;
-    while(currentChar != '\n' && ii < ArraySize && getOut == 0)
+    while(currentChar != '\n' && ii < ArraySize && getOut == 0 && (i + ii + 1) < UART_BUFFER_SIZE)
     {
     	uCharArray[ii] = currentChar;
     	++ii;
@@ -127,12 +127,12 @@ void updateGps(gpsData *gpsStruct)
 	USART_Parser(gpsDataString, 80); // into this function right there
 	unsigned char getIn = 0;
 	unsigned char currentStart = 7; //Cette variable est l'index qui indique la premiere position de la latitude dans le gpsDataString array
-	if(gpsDataString[4] == 'G') // check if data is GPGGA
+	if(gpsDataString[4] == 'G') // check if data is GPGGA ex gpsDataString[0 to 4] = "$GPGG"
 	{
 		getIn = 1;
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
-		while(i < 20 || GTFO == 0)
+		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
 			if(temp == ',')
@@ -150,7 +150,7 @@ void updateGps(gpsData *gpsStruct)
 		getIn = 1;
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
-		while(i < 20 || GTFO == 0)
+		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
 			if(temp == ',')
@@ -173,7 +173,7 @@ void updateGps(gpsData *gpsStruct)
 		unsigned char subsetLatitude[20] = {0};
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
-		while(i < 20 || GTFO == 0)
+		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
 			if(temp != ',')
@@ -192,7 +192,7 @@ void updateGps(gpsData *gpsStruct)
 		currentStart += 2; // +2 because you move past the comma and get the first position of the longitude
 		GTFO = 0;
 		i = 0;
-		while(i < 20 || GTFO == 0)
+		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
 			if(temp != ',')
@@ -226,21 +226,21 @@ void USART1_IRQHandler(void) {
         tmp = USART1->SR;                       /* Read status register */
         tmp = USART1->DR;                       /* Read data register */
         (void)tmp;                              /* Prevent compiler warnings */
-        DMA1_Stream5->CR &= ~DMA_SxCR_EN;       /* Disabling DMA will force transfer complete interrupt if enabled */
+        DMA2_Stream5->CR &= ~DMA_SxCR_EN;       /* Disabling DMA will force transfer complete interrupt if enabled */
     }
 }
 
 /**
- * \brief       Global interrupt handler for DMA1 stream5
+ * \brief       Global interrupt handler for DMA2 stream5
  * \note        Except memcpy, there is no functions used to
  */
-void DMA1_Stream5_IRQHandler(void) {
+void DMA2_Stream5_IRQHandler(void) {
     size_t len, tocopy;
     uint8_t* ptr;
 
     /* Check transfer complete flag */
-    if (DMA1->HISR & DMA_FLAG_TCIF5) {
-        DMA1->HIFCR = DMA_FLAG_TCIF5;           /* Clear transfer complete flag */
+    if (DMA2->HISR & DMA_FLAG_TCIF5) {
+        DMA2->HIFCR = DMA_FLAG_TCIF5;           /* Clear transfer complete flag */
 
         /* Calculate number of bytes actually transfered by DMA so far */
         /**
@@ -248,7 +248,7 @@ void DMA1_Stream5_IRQHandler(void) {
          *  - All data actually transfered (NDTR = 0)
          *  - Stream disabled inside USART IDLE line detected interrupt (NDTR != 0)
          */
-        len = DMA_RX_BUFFER_SIZE - DMA1_Stream5->NDTR;
+        len = DMA_RX_BUFFER_SIZE - DMA2_Stream5->NDTR;
         tocopy = UART_BUFFER_SIZE - Write;      /* Get number of bytes we can copy to the end of buffer */
 
         /* Check how many bytes to copy */
@@ -273,9 +273,9 @@ void DMA1_Stream5_IRQHandler(void) {
 
         /* Prepare DMA for next transfer */
         /* Important! DMA stream won't start if all flags are not cleared first */
-        DMA1->HIFCR = DMA_FLAG_DMEIF5 | DMA_FLAG_FEIF5 | DMA_FLAG_HTIF5 | DMA_FLAG_TCIF5 | DMA_FLAG_TEIF5;
-        DMA1_Stream5->M0AR = (uint32_t)DMA_RX_Buffer;   /* Set memory address for DMA again */
-        DMA1_Stream5->NDTR = DMA_RX_BUFFER_SIZE;    /* Set number of bytes to receive */
-        DMA1_Stream5->CR |= DMA_SxCR_EN;            /* Start DMA transfer */
+        DMA2->HIFCR = DMA_FLAG_DMEIF5 | DMA_FLAG_FEIF5 | DMA_FLAG_HTIF5 | DMA_FLAG_TCIF5 | DMA_FLAG_TEIF5;
+        DMA2_Stream5->M0AR = (uint32_t)DMA_RX_Buffer;   /* Set memory address for DMA again */
+        DMA2_Stream5->NDTR = DMA_RX_BUFFER_SIZE;    /* Set number of bytes to receive */
+        DMA2_Stream5->CR |= DMA_SxCR_EN;            /* Start DMA transfer */
     }
 }
