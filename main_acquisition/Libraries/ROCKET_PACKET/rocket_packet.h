@@ -13,7 +13,8 @@
 #define ROCKET_PACKET_ROCKET_PACKET_H_
 
 // size of the packet including the checksum
-#define ROCKET_PACKET_SIZE 62
+#define ROCKET_PACKET_SIZE 58
+#define ROCKET_PACKET_START 's'
 
 typedef struct {
 	unsigned long timestamp;
@@ -32,9 +33,6 @@ typedef struct {
 	float x_gyro;
 	float y_gyro;
 	float z_gyro;
-	// motor values
-	float tank_pressure;
-	uint8_t valve_state;
 } RocketData;
 
 typedef struct {
@@ -43,6 +41,6 @@ typedef struct {
 	uint8_t checksum;
 } RocketPacket;
 
-void serialize_rocket_packet(RocketPacket* pkt, uint8_t* s);
+unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* s);
 
 #endif /* ROCKET_PACKET_ROCKET_PACKET_H_ */
