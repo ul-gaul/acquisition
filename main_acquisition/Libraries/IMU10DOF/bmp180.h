@@ -8,6 +8,7 @@
 #ifndef IMU10DOF_BMP180_H_
 #define IMU10DOF_BMP180_H_
 
+#include "stm32f4xx.h"
 #include "imu10dof.h"
 
 #define IMU10DOF_I2C_ADDR 0xEE
@@ -51,5 +52,40 @@ typedef struct {
 	uint16_t delay;
 	BMP180_Sampling sampling;
 } BMP180_struct;
+
+/*
+ * Initialise the BMP180 pressure sensor.
+ */
+BMP180_Results bmp180_init(BMP180_struct* data);
+
+/*
+ * Start the temperature sensor on the BMP180.
+ */
+BMP180_Results bmp180_start_temperature(BMP180_struct* data);
+
+/*
+ * Read the temperature from the BMP180.
+ */
+BMP180_Results bmp180_read_temperature(BMP180_struct* data);
+
+/*
+ * Start the pressure reading on the BMP180.
+ */
+BMP180_Results bmp180_start_pressure(BMP180_struct* data, BMP180_Sampling sampling);
+
+/*
+ * Read the pressure from the BMP180.
+ */
+BMP180_Results bmp180_read_pressure(BMP180_struct* data);
+
+/*
+ * Calculate pressure above sea level in pascals. This is good, if 
+ * you read pressure from sensor at known altitude, not altitude
+ * provided from sensor. Altitude from sensor is calculated in fact,
+ * that pressure above the sea is 101325 Pascals. So, if you know
+ * your pressure, and you use calculated altitude, you will not get
+ * real pressure above the sea.
+ */
+uint32_t bmp180_get_pressure_at_sea_level(uint32_t pressure, float altitude);
 
 #endif /* IMU10DOF_BMP180_H_ */
