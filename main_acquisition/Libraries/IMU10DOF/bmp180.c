@@ -37,13 +37,30 @@ BMP180_Results bmp180_is_connected(BMP180_struct* data) {
 
 BMP180_Results bmp180_init(BMP180_struct* data) {
 	uint8_t raw_data[22];
-	uint8_t i;
+	uint8_t i = 0;
 
 	// test if BMP180 is connected
 	if(!imu10dof_check_i2c_connection(BMP180_I2C_ADDRW)) {
 		return BMP180_Res_NoConnect;
 	}
+	//	get default values from EEPROM, EEPROM starts at 0xAA address, read 22 bytes
+	i2c_read_multi(BMP180_I2C_ADDRR, BMP180_REGISTER_EEPROM, raw_data, 22);
 
+	/* Set configuration values */
+	AC1 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	AC2 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	AC3 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	AC4 = (uint16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	AC5 = (uint16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	AC6 = (uint16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	B1 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	B2 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	MB = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	MC = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
+	MD = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]);
+
+	/* Initialized OK */
+	lib_initialized = 1;
 
 	return BMP180_Res_OK;
 }
