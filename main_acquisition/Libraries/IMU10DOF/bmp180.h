@@ -11,7 +11,8 @@
 #include "stm32f4xx.h"
 #include "imu10dof.h"
 
-#define IMU10DOF_I2C_ADDR 0xEE
+#define BMP180_I2C_ADDRW 0xEE
+#define BMP180_I2C_ADDRR 0xEF
 
 /* Registers */
 #define	BMP180_REGISTER_CONTROL 	0xF4
@@ -52,6 +53,11 @@ typedef struct {
 	uint16_t delay;
 	BMP180_Sampling sampling;
 } BMP180_struct;
+
+/*
+ * Check if the BMP180 is connected.
+ */
+BMP180_Results bmp180_is_connected(BMP180_struct* data);
 
 /*
  * Initialise the BMP180 pressure sensor.
