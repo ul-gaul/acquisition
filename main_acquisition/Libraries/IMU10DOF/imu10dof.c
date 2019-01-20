@@ -69,8 +69,11 @@ uint8_t i2c_stop(void) {
 /* IMU10DOF related functions */
 
 uint8_t imu10dof_check_i2c_connection(uint8_t address) {
-
-	return 0;
+	// i2c_start will return 0 if device is connected
+	uint8_t connected = 0;
+	if(!i2c_start(address, I2C_TRANSMITTER_MODE, 1)) connected = 1;
+	i2c_stop();
+	return connected;
 }
 
 void imu10dof_i2c_init(void) {
