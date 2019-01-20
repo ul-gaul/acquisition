@@ -66,6 +66,76 @@ uint8_t i2c_stop(void) {
 	return 0;
 }
 
+uint8_t i2c_read_ack(void) {
+	uint8_t data;
+
+	/* Enable ACK */
+	IMU10DOF_I2C->CR1 |= I2C_CR1_ACK;
+
+	/* Wait till not received */
+	i2c_timeout = I2C_TIMEOUT;
+	while (!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
+		if (--i2c_timeout == 0x00) {
+			return 1;
+		}
+	}
+
+	/* Read data */
+	data = IMU10DOF_I2C->DR;
+
+	/* Return data */
+	return data;
+}
+
+uint8_t i2c_read_nack(void) {
+	uint8_t data;
+
+	/* Disable ACK */
+	IMU10DOF_I2C->CR1 &= ~I2C_CR1_ACK;
+
+	/* Generate stop */
+	IMU10DOF_I2C->CR1 |= I2C_CR1_STOP;
+
+	/* Wait till received */
+	i2c_timeout = I2C_TIMEOUT;
+	while (!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
+		if (--i2c_timeout == 0x00) {
+			return 1;
+		}
+	}
+
+	/* Read data */
+	data = IMU10DOF_I2C->DR;
+
+	/* Return data */
+	return data;
+}
+
+void i2c_write_data(uint8_t data) {
+	/* Wait till I2C is not busy anymore */
+	i2c_timeout = I2C_TIMEOUT;
+	while (!(IMU10DOF_I2C->SR1 & I2C_SR1_TXE) && i2c_timeout) {
+		i2c_timeout--;
+	}
+
+	/* Send I2C data */
+	IMU10DOF_I2C->DR = data;
+}
+
+void i2c_read_multi(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
+	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_ENABLE);
+	i2c_write_data(reg);
+	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_ENABLE);
+	while (count--) {
+		if (!count) {
+			/* Last byte */
+			*data++ = i2c_read_nack();
+		} else {
+			*data++ = i2c_read_ack();
+		}
+	}
+}
+
 /* IMU10DOF related functions */
 
 uint8_t imu10dof_check_i2c_connection(uint8_t address) {
