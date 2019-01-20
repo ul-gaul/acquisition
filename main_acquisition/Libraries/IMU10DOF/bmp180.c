@@ -27,6 +27,9 @@ int32_t X1, X2, X3, B3, B5, B6, T, p;
 uint32_t B4, B7, UP;
 uint8_t lib_initialized = 0;
 
+
+/* BMP180 related functions */
+
 BMP180_Results bmp180_is_connected(BMP180_struct* data) {
 
 	return BMP180_Res_OK;

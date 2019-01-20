@@ -15,6 +15,7 @@
 #include "l3gd20.h"
 #include "lsm303dlhc.h"
 
+
 #define IMU10DOF_I2C I2C1
 #define IMU10DOF_I2C_GPIO_PORT GPIOB
 #define IMU10DOF_I2C_SCL_SOURCE GPIO_PinSource6

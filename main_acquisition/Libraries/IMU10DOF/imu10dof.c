@@ -8,6 +8,66 @@
 #include "imu10dof.h"
 
 
+#define I2C_TIMEOUT 100
+
+
+static uint32_t i2c_timeout;
+//static uint32_t TM_I2C_INT_Clocks[3] = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
+
+/* Private defines */
+#define I2C_TRANSMITTER_MODE   0
+#define I2C_RECEIVER_MODE      1
+#define I2C_ACK_ENABLE         1
+#define I2C_ACK_DISABLE        0
+
+/* I2C related functions */
+
+uint8_t i2c_wait_busy(void) {
+	i2c_timeout = I2C_TIMEOUT;
+	while(!(IMU10DOF_I2C->SR1 & I2C_SR1_SB)) {
+		if(--i2c_timeout == 0) return 1;
+	}
+	return 0;
+}
+
+uint8_t i2c_start(uint8_t address, uint8_t direction, uint8_t ack) {
+	// generate i2c start pulse
+	IMU10DOF_I2C->CR1 |= I2C_CR1_START;
+	// wait for i2c to be busy
+	if(i2c_wait_busy()) return 1;
+	// enable ack if applicable
+	if(ack) IMU10DOF_I2C->CR1 |= I2C_CR1_ACK;
+	// send write / read bit
+	i2c_timeout = I2C_TIMEOUT;
+	if(direction == I2C_TRANSMITTER_MODE) {
+		IMU10DOF_I2C->DR = address & ~I2C_OAR1_ADD0;
+		while(!(IMU10DOF_I2C->SR1 & I2C_SR1_ADDR)) {
+			if(--i2c_timeout == 0) return 1;
+		}
+	} else if(direction == I2C_RECEIVER_MODE) {
+		IMU10DOF_I2C->DR = address | I2C_OAR1_ADD0;
+		while(!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) {
+			if(--i2c_timeout == 0) return 1;
+		}
+	}
+	// read status register to clear ADDR flag
+	IMU10DOF_I2C->SR2;
+	return 0;
+}
+
+uint8_t i2c_stop(void) {
+	// wait till transmitter not empty
+	i2c_timeout = I2C_TIMEOUT;
+	while (((!(IMU10DOF_I2C->SR1 & I2C_SR1_TXE)) || (!(IMU10DOF_I2C->SR1 & I2C_SR1_BTF)))) {
+		if(--i2c_timeout == 0) return 1;
+	}
+	// generate stop
+	IMU10DOF_I2C->CR1 |= I2C_CR1_STOP;
+	return 0;
+}
+
+/* IMU10DOF related functions */
+
 uint8_t imu10dof_check_i2c_connection(uint8_t address) {
 
 	return 0;
