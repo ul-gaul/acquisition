@@ -6,3 +6,7 @@
  */
 
 #include "l3gd20.h"
+
+void l3gd20_init(void) {
+
+}

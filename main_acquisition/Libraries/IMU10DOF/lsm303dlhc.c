@@ -6,3 +6,7 @@
  */
 
 #include "lsm303dlhc.h"
+
+void lsm303dlhc_init(void) {
+
+}
