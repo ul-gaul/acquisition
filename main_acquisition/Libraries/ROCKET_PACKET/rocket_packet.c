@@ -51,7 +51,7 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 
 	// compute checksum
 	pkt->checksum = 0;
-	for(int i = 0; i < offset; i++) {
+	for(int i = 1; i < offset; i++) {
 		pkt->checksum += dst[i];
 	}
 	pkt->checksum = ~pkt->checksum;
