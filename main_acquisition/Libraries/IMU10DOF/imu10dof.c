@@ -66,6 +66,21 @@ uint8_t i2c_stop(void) {
 	return 0;
 }
 
+uint8_t i2c_read(uint8_t address, uint8_t reg) {
+	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
+	i2c_write_data(reg);
+	i2c_stop();
+	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_DISABLE);
+	return i2c_read_nack();
+}
+
+uint8_t i2c_read_no_register(uint8_t address) {
+	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_ENABLE);
+	return i2c_read_nack();
+}
+
+
+
 uint8_t i2c_read_ack(void) {
 	uint8_t data;
 
@@ -134,6 +149,47 @@ void i2c_read_multi(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count)
 			*data++ = i2c_read_ack();
 		}
 	}
+}
+
+void i2c_read_multi_no_register(uint8_t address, uint8_t* data, uint16_t count) {
+	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_ENABLE);
+	while(count--) {
+		if(!count) {
+			*data = i2c_read_nack();
+		} else {
+			*data = i2c_read_ack();
+		}
+	}
+}
+
+void i2c_write(uint8_t address, uint8_t reg, uint8_t data) {
+	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
+	i2c_write_data(reg);
+	i2c_write_data(data);
+	i2c_stop();
+}
+
+void i2c_write_multi(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
+	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
+	i2c_write_data(reg);
+	while(count--) {
+		i2c_write_data(*data++);
+	}
+	i2c_stop();
+}
+
+void i2c_write_no_register(uint8_t address, uint8_t data) {
+	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
+	i2c_write_data(data);
+	i2c_stop();
+}
+
+void i2c_write_multi_no_register(uint8_t address, uint8_t* data, uint16_t count) {
+	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
+	while(count--) {
+		i2c_write_data(*data++);
+	}
+	i2c_stop();
 }
 
 /* IMU10DOF related functions */

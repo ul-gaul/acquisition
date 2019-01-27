@@ -10,6 +10,7 @@
 
 #include "stm32f4xx.h"
 #include "imu10dof.h"
+#include "math.h"
 
 #define BMP180_I2C_ADDRW 0xEE
 #define BMP180_I2C_ADDRR 0xEF
