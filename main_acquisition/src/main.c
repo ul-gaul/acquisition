@@ -69,8 +69,7 @@ int main(void) {
 //	init_rfd900();
 //	initGps();// activate USART1 on PA9 (TX) and PA10 (RX)
 	imu10dof_init((struct BMP180_struct *) &bmp180_data);
-	bmp180_start_temperature(&bmp180_data);
-	bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard);
+//	bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard);
 //	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
 	/* Infinite loop */
@@ -131,8 +130,10 @@ int main(void) {
         //fonction qui met a jour les donner dans le gpsDataStruct
 //		updateGps(&gpsDataStruct);
 		// read IMU10DOF devices
+		bmp180_start_temperature(&bmp180_data); //function qui fait tout
+		delay_ms(4); // le scruct.delay semble servir a absolument rien!
 		bmp180_read_temperature(&bmp180_data);
-		bmp180_read_pressure(&bmp180_data);
+//		bmp180_read_pressure(&bmp180_data);
 		// update rocket packet with imu10dof data
 //		rp.data.altitude = bmp180_data.altitude;
 //		rp.data.temperature = bmp180_data.temperature;
