@@ -49,6 +49,11 @@ int main(void) {
 
 	/* Application code goes here */
 	
+	// global BMP180, L3GD20 and LSM303 structs are declared here
+	BMP180_struct bmp180_data;
+//	l3gd20_struct l3gd20_data;
+//	lsm303_struct lsm303_data;
+
 	// configure Systick to 84000 ticks
 	// with 168 000 000 ticks/s it means an interrupt every 0.5 ms
 	SysTick_Config(SystemCoreClock / 2000);
@@ -63,6 +68,9 @@ int main(void) {
 	set_led_off(LED6);
 	init_rfd900();
 	initGps();// activate USART1 on PA9 (TX) and PA10 (RX)
+	imu10dof_init((struct BMP180_struct *) &bmp180_data);
+	bmp180_start_temperature(&bmp180_data);
+	bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard);
 	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
 	/* Infinite loop */
@@ -70,19 +78,32 @@ int main(void) {
 	// writing test rocket data and packet
 	RocketData rd;
 	rd.timestamp = 0;
-	rd.latitude = 46.779013;
-	rd.longitude = -71.276001;
-	rd.altitude = 10000.1;
-	rd.temperature = 25.7;
-	rd.x_accel = 1.56;
-	rd.y_accel = 2.45;
-	rd.z_accel = 3.91;
-	rd.x_magnet = 11.12;
-	rd.y_magnet = 12.34;
-	rd.z_magnet = 13.56;
-	rd.x_gyro = 21.12;
-	rd.y_gyro = 22.34;
-	rd.z_gyro = 23.56;
+	//rd.latitude = 46.779013;
+	rd.latitude = 0;
+	//rd.longitude = -71.276001;
+	rd.longitude = 0;
+	//rd.altitude = 10000.1;
+	rd.altitude = 0;
+	//rd.temperature = 25.7;
+	rd.temperature = 0;
+	//rd.x_accel = 1.56;
+	rd.x_accel = 0;
+	//rd.y_accel = 2.45;
+	rd.y_accel = 0;
+	//rd.z_accel = 3.91;
+	rd.z_accel = 0;
+	//rd.x_magnet = 11.12;
+	rd.x_magnet = 0;
+	//rd.y_magnet = 12.34;
+	rd.y_magnet = 0;
+	//rd.z_magnet = 13.56;
+	rd.z_magnet = 0;
+	//rd.x_gyro = 21.12;
+	rd.x_gyro = 0;
+	//rd.y_gyro = 22.34;
+	rd.y_gyro = 0;
+	//rd.z_gyro = 23.56;
+	rd.z_gyro = 0;
 	RocketPacket rp;
 	rp.start_char = ROCKET_PACKET_START;
 	rp.data = rd;
@@ -99,7 +120,7 @@ int main(void) {
 		rfd900_write(rp_buffer, num_bytes);
 		delay_ms(500);
 		set_led_on(LED1);
-		//Cette partie transfer les donnee recus dans le buffer ou les donnees sont "stocker"
+		//Cette partie transfer les donnee recus dans le buffer ou les donnees sont "stockees"
         while (Read != Write) {                 /* Do it until buffer is empty */
             USART1->DR = UART_Buffer[Read++];   /* Start byte transfer */
             while (!(USART1->SR & USART_SR_TXE));   /* Wait till finished */
@@ -112,6 +133,12 @@ int main(void) {
 		rd.timestamp = gpsDataStruct.UTCTime;
 		rd.latitude = gpsDataStruct.latitude;
 		rd.longitude = gpsDataStruct.longitude;
+		// read IMU10DOF devices
+		bmp180_read_temperature(&bmp180_data);
+		bmp180_read_pressure(&bmp180_data);
+		// update rocket packet with imu10dof data
+		rp.data.altitude = bmp180_data.altitude;
+		rp.data.temperature = bmp180_data.temperature;
 	}
 }
 
