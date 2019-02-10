@@ -133,7 +133,8 @@ unsigned char customSplit() // TODO : implementing a prettier way to split the c
 void updateGps(gpsData *gpsStruct)
 {
     unsigned char gpsDataString[80]; //important to put the array size from here
-	USART_Parser(gpsDataString, 80); // into this function right there // TO UNCOMMENT
+    memset(gpsDataString, 0, 80);
+	USART_Parser(gpsDataString, 80); // into this function right there
 	unsigned char getIn = 0;
 	unsigned short utcGetIn = 0;
 	unsigned char currentStart = 7; //Cette variable est l'index qui indique la premiere position de la latitude dans le gpsDataString array
