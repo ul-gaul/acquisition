@@ -109,6 +109,9 @@ int main(void) {
         }
         //fonction qui met a jour les donner dans le gpsDataStruct
 		updateGps(&gpsDataStruct);
+		rd.timestamp = gpsDataStruct.UTCTime;
+		rd.latitude = gpsDataStruct.latitude;
+		rd.longitude = gpsDataStruct.longitude;
 	}
 }
 
