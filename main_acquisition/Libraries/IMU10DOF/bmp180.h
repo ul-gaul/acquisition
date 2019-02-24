@@ -27,12 +27,12 @@
 #define	BMP180_COMMAND_PRESSURE_2 0xB4
 #define	BMP180_COMMAND_PRESSURE_3 0xF4
 
-/* Minimum waiting delay, in microseconds */
-#define BMP180_TEMPERATURE_DELAY	4500
-#define BMP180_PRESSURE_0_DELAY		4500
-#define BMP180_PRESSURE_1_DELAY		7500
-#define BMP180_PRESSURE_2_DELAY		13000
-#define BMP180_PRESSURE_3_DELAY		25000
+/* Minimum waiting delay, in milliseconds */
+#define BMP180_TEMPERATURE_DELAY	5
+#define BMP180_PRESSURE_0_DELAY		5
+#define BMP180_PRESSURE_1_DELAY		8
+#define BMP180_PRESSURE_2_DELAY		13
+#define BMP180_PRESSURE_3_DELAY		25
 
 typedef enum {
 	BMP180_Res_OK = 0x00,
@@ -52,6 +52,7 @@ typedef struct {
 	uint32_t pressure;
 	float temperature;
 	uint16_t delay;
+	void (* delay_func)(uint32_t delay_ms);
 	BMP180_Sampling sampling;
 } BMP180_struct;
 

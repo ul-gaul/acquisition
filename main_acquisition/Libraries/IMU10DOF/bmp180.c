@@ -20,12 +20,12 @@
 #define BMP180_1_101325 ((float) 0.00000986923266726)
 
 /* EEPROM values */
-int16_t AC1, AC2, AC3, B1, B2, MB, MC, MD;
-uint16_t AC4, AC5, AC6, uncomp_temperature;
+static int16_t AC1, AC2, AC3, B1, B2, MB, MC, MD;
+static uint16_t AC4, AC5, AC6, uncomp_temperature;
 /* OK */
-int32_t X1, X2, X3, B3, B5, B6, T, p;
-uint32_t B4, B7, uncomp_pressure;
-uint8_t lib_initialized = 0;
+static int32_t X1, X2, X3, B3, B5, B6, T, p;
+static uint32_t B4, B7, uncomp_pressure;
+static uint8_t lib_initialized = 0;
 
 
 /* BMP180 related functions */
@@ -73,6 +73,7 @@ BMP180_Results bmp180_start_temperature(BMP180_struct* data) {
 		BMP180_COMMAND_TEMPERATURE);
 	// set minimum delay
 	data->delay = BMP180_TEMPERATURE_DELAY;
+	data->delay_func(data->delay);
 	return BMP180_Res_OK;
 }
 
@@ -118,6 +119,8 @@ BMP180_Results bmp180_start_pressure(BMP180_struct* data, BMP180_Sampling sampli
 	}
 	// write to device
 	i2c_write(BMP180_I2C_ADDRW, BMP180_REGISTER_CONTROL, command);
+	// wait for device
+	data->delay_func(data->delay);
 	// save selected sampling
 	data->sampling = sampling;
 	return BMP180_Res_OK;

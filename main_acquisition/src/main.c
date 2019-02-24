@@ -48,15 +48,15 @@ int main(void) {
 	*/
 
 	/* Application code goes here */
+
+	// configure Systick to 84000 ticks
+	// with 168 000 000 ticks/s it means an interrupt every 0.5 ms
+	SysTick_Config(SystemCoreClock / 2000);
 	
 	// global BMP180, L3GD20 and LSM303 structs are declared here
 	BMP180_struct bmp180_data;
 //	l3gd20_struct l3gd20_data;
 //	lsm303_struct lsm303_data;
-
-	// configure Systick to 84000 ticks
-	// with 168 000 000 ticks/s it means an interrupt every 0.5 ms
-	SysTick_Config(SystemCoreClock / 2000);
 
 //	init_leds();
 	init_TIM2();
@@ -68,8 +68,11 @@ int main(void) {
 //	set_led_off(LED6);
 //	init_rfd900();
 //	initGps();// activate USART1 on PA9 (TX) and PA10 (RX)
-	imu10dof_init((struct BMP180_struct *) &bmp180_data);
-//	bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard);
+
+	imu10dof_init((struct BMP180_struct *) &bmp180_data, &delay_ms);
+	bmp180_data.delay_func = &delay_ms;
+
+
 //	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
 	/* Infinite loop */
@@ -130,8 +133,9 @@ int main(void) {
         //fonction qui met a jour les donner dans le gpsDataStruct
 //		updateGps(&gpsDataStruct);
 		// read IMU10DOF devices
-		bmp180_start_temperature(&bmp180_data); //function qui fait tout
-		delay_ms(4); // le scruct.delay semble servir a absolument rien!
+		bmp180_start_temperature(&bmp180_data);
+//		bmp180_data.delay_func(500);
+		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard)
 		bmp180_read_temperature(&bmp180_data);
 //		bmp180_read_pressure(&bmp180_data);
 		// update rocket packet with imu10dof data
