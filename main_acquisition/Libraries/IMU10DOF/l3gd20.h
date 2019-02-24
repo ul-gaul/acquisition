@@ -36,13 +36,56 @@
 #define GYRO_REGISTER_FIFO_SRC_REG 0x2F // r
 #define GYRO_REGISTER_INT1_CFG 0x30 // 00000000 rw
 #define GYRO_REGISTER_INT1_SRC 0x31 // r
-#define GYRO_REGISTER_TSH_XH 0x3 // 00000000 rw
-#define GYRO_REGISTER_TSH_XL 0x3 // 00000000 rw
-#define GYRO_REGISTER_TSH_YH 0x3 // 00000000 rw
-#define GYRO_REGISTER_TSH_YL 0x3 // 00000000 rw
-#define GYRO_REGISTER_TSH_ZH 0x3 // 00000000 rw
-#define GYRO_REGISTER_TSH_ZL 0x3 // 00000000 rw
+#define GYRO_REGISTER_TSH_XH 0x32 // 00000000 rw
+#define GYRO_REGISTER_TSH_XL 0x33 // 00000000 rw
+#define GYRO_REGISTER_TSH_YH 0x34 // 00000000 rw
+#define GYRO_REGISTER_TSH_YL 0x35 // 00000000 rw
+#define GYRO_REGISTER_TSH_ZH 0x36 // 00000000 rw
+#define GYRO_REGISTER_TSH_ZL 0x37 // 00000000 rw
 #define GYRO_REGISTER_INT1_DURATION 0x38 // 00000000   rw
+
+/**
+ * @brief  L3GD20 main working structure
+ */
+typedef struct {
+	int16_t X; /*!< X axis rotation */
+	int16_t Y; /*!< Y axis rotation */
+	int16_t Z; /*!< Z axis rotation */
+} L3GD20_struct;
+
+/**
+ * @brief  L3GD20 Result enumerations
+ */
+typedef enum {
+	L3GD20_Result_Ok,   /*!< Everything OK */
+	L3GD20_Result_Error /*!< Error occurred */
+} L3GD20_result;
+
+/**
+ * @brief  Enumeration for scale select
+ */
+typedef enum {
+	L3GD20_Scale_250, /*!< Set full scale to 250 mdps */
+	L3GD20_Scale_500, /*!< Set full scale to 500 mdps */
+	L3GD20_Scale_2000 /*!< Set full scale to 2000 mdps */
+} L3GD20_scale;
+
+
+/**
+ * @brief  Initializes L3GD20 sensor
+ * @param  scale: L3GD20 scale selection. This parameter can be a value of @ref TM_L3GD20_Scale_t enumeration
+ * @retval Sensor status:
+ *            - TM_L3GD20_Result_Ok: Sensor detected
+ *            - TM_L3GD20_Result_Error: Sensor not detected
+ */
+L3GD20_result TM_L3GD20_Init(L3GD20_scale scale);
+
+/**
+ * @brief  Reads rotation data from sensor
+ * @param  *L3DG20_Data: Pointer to working @ef TM_L3GD20_t structure
+ * @retval Read status: TM_L3GD20_Result_Ok
+ */
+L3GD20_result TM_L3GD20_Read(L3GD20_result* L3DG20_Data);
 
 void l3gd20_init(void);
 

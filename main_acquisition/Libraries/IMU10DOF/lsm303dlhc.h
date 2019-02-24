@@ -8,6 +8,7 @@
 #ifndef IMU10DOF_LSM303DLHC_H_
 #define IMU10DOF_LSM303DLHC_H_
 
+
 void lsm303dlhc_init(void);
 
 #endif /* IMU10DOF_LSM303DLHC_H_ */
