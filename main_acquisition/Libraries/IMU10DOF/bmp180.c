@@ -47,17 +47,17 @@ BMP180_Results bmp180_init(BMP180_struct* data) {
 	i2c_read_multi(BMP180_I2C_ADDRR, BMP180_REGISTER_EEPROM, raw_data, 22);
 
 	/* Set configuration values */
-	AC1 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	AC2 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	AC3 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	AC4 = (uint16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	AC5 = (uint16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	AC6 = (uint16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	B1 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	B2 = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	MB = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	MC = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]); i += 2;
-	MD = (int16_t) (raw_data[i] << 8 | raw_data[i + 1]);
+	AC1 = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	AC2 = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	AC3 = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	AC4 = (uint16_t) (((uint16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	AC5 = (uint16_t) (((uint16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	AC6 = (uint16_t) (((uint16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	B1 = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	B2 = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	MB = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	MC = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]); i += 2;
+	MD = (int16_t) (((int16_t) raw_data[i]) << 8 | raw_data[i + 1]);
 
 	/* Initialized OK */
 	lib_initialized = 1;
@@ -82,16 +82,19 @@ BMP180_Results bmp180_read_temperature(BMP180_struct* data) {
 	// check that library was initialized first
 	if(!lib_initialized) return BMP180_Res_LibNotInit;
 	// read multi bytes first
-	i2c_read_multi(BMP180_I2C_ADDRW, BMP180_REGISTER_RESULT, 
+	i2c_read_multi(BMP180_I2C_ADDRR, BMP180_REGISTER_RESULT,
 		raw_data, 2);
 	// read uncompensated temperature
-	uncomp_temperature = raw_data[0] << 8 | raw_data[1];
+	uint16_t msb = raw_data[0];
+	uncomp_temperature = (msb << 8) + (uint16_t) raw_data[1];
 	// compensate temperature (get actual value)
 	X1 = (uncomp_temperature - AC6) * AC5 * BMP180_1_32768;
-	X2 = MC * 2048 / (X1 - MD);
+	X2 = ((int32_t) MC * 2048) / (X1 + MD);
 	B5 = X1 + X2;
 	// convert to degrees and store in data struct
-	data->temperature = (B5 + 8) / ((float) 160);
+//	int32_t tmp;
+//	tmp = (B5 + 8) / ((float) 160.0);
+	data->temperature = (B5 + 8) / ((float) 160.0);
 	return BMP180_Res_OK;
 }
 
