@@ -135,7 +135,7 @@ int main(void) {
 		// read IMU10DOF devices
 		bmp180_start_temperature(&bmp180_data);
 //		bmp180_data.delay_func(500);
-		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard)
+		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_standard);
 		bmp180_read_temperature(&bmp180_data);
 //		bmp180_read_pressure(&bmp180_data);
 		// update rocket packet with imu10dof data
