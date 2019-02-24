@@ -17,7 +17,7 @@
 #define BMP180_1_8192   ((float) 0.0001220703125)
 #define BMP180_1_32768  ((float) 0.000030517578125)
 #define BMP180_1_65536  ((float) 0.0000152587890625)
-#define BMP180_1_101325 ((float) 0.00000986923266726)
+#define BMP180_1_P_SEA ((float) 0.00001) // BMP180_1_P_SEA is equal to 1 over pressure at sea level
 
 /* EEPROM values */
 static int16_t AC1, AC2, AC3, B1, B2, MB, MC, MD;
@@ -135,7 +135,8 @@ BMP180_Results bmp180_read_pressure(BMP180_struct* data) {
 	// read multi bytes from i2c
 	i2c_read_multi(BMP180_I2C_ADDRR, BMP180_REGISTER_RESULT, raw_data, 3);
 	// read uncompensated pressure value
-	uncomp_pressure = (raw_data[0] << 16 | raw_data[1] << 8 | raw_data[2]) >> (8 - (uint8_t) data->sampling);
+
+	uncomp_pressure = ((((uint32_t) raw_data[0]) << 16) | ((uint32_t) raw_data[1] << 8) | ((uint32_t) raw_data[2])) >> (8 - (uint8_t) data->sampling);
 	// compensated pressure (get actual value)
 	B6 = B5 - 4000;
 	X1 = (B2 * (B6 * B6 * BMP180_1_4096)) * BMP180_1_2048;
@@ -159,7 +160,7 @@ BMP180_Results bmp180_read_pressure(BMP180_struct* data) {
 	// save pressure
 	data->pressure = p;
 	// calculate altitude
-	data->altitude = (float) 44330.0 * (float) ((float) 1.0 - (float) pow((float) p * BMP180_1_101325, 0.19029495));
+	data->altitude = 44330.0 * (1.0 - (float) pow(((float) p) * BMP180_1_P_SEA, 0.19029495));
 	return BMP180_Res_OK;
 }
 
