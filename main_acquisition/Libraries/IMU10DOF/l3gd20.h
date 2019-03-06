@@ -7,6 +7,12 @@
 
 #ifndef IMU10DOF_L3GD20_H_
 #define IMU10DOF_L3GD20_H_
+#include "imu10dof.h"
+#include "stm32f4xx.h"
+#include "imu10dof.h"
+#include "math.h"
+
+#define L3GD20H_I2c_SLAVE_ADDRESS 0b1101011 // 1101010 si SDO est connecter au ground, nous sommes connecter au VCC donc 1101011
 
 #define L3GD20_ADDRESS (0x6B) // 1101011
 #define L3GD20_POLL_TIMEOUT (100) // Maximum number of read attempts
@@ -16,6 +22,8 @@
 #define GYRO_SENSITIVITY_250DPS (0.00875F)
 #define GYRO_SENSITIVITY_500DPS (0.0175F)
 #define GYRO_SENSITIVITY_2000DPS (0.070F)
+
+#define GYRO_WHO_AM_I 0xD4
 
 #define GYRO_REGISTER_WHO_AM_I 0x0F // 11010100 r
 #define GYRO_REGISTER_CTRL_REG1 0x20 // 00000111 rw
@@ -32,7 +40,7 @@
 #define GYRO_REGISTER_OUT_Y_H 0x2B // r
 #define GYRO_REGISTER_OUT_Z_L 0x2C // r
 #define GYRO_REGISTER_OUT_Z_H 0x2D // r
-#define GYRO_REGISTER_FIFO_CTRL_REG 0x2E // 00000000 rw
+#define GYRO_REGISTER_FIFO_CTRL_REG 0x2E // gyro en mode fifo 0010 1110 rw, mettre 0x0E pour le mettre en bypass mode (restart data collection)
 #define GYRO_REGISTER_FIFO_SRC_REG 0x2F // r
 #define GYRO_REGISTER_INT1_CFG 0x30 // 00000000 rw
 #define GYRO_REGISTER_INT1_SRC 0x31 // r
@@ -48,9 +56,9 @@
  * @brief  L3GD20 main working structure
  */
 typedef struct {
-	int16_t X; /*!< X axis rotation */
-	int16_t Y; /*!< Y axis rotation */
-	int16_t Z; /*!< Z axis rotation */
+	short X; /*!< X axis rotation */
+	short Y; /*!< Y axis rotation */
+	short Z; /*!< Z axis rotation */
 } L3GD20_struct;
 
 /**
@@ -78,14 +86,14 @@ typedef enum {
  *            - TM_L3GD20_Result_Ok: Sensor detected
  *            - TM_L3GD20_Result_Error: Sensor not detected
  */
-L3GD20_result TM_L3GD20_Init(L3GD20_scale scale);
+L3GD20_result L3GD20_Init(L3GD20_scale scale);
 
 /**
  * @brief  Reads rotation data from sensor
  * @param  *L3DG20_Data: Pointer to working @ef TM_L3GD20_t structure
  * @retval Read status: TM_L3GD20_Result_Ok
  */
-L3GD20_result TM_L3GD20_Read(L3GD20_result* L3DG20_Data);
+L3GD20_result L3GD20_Read(L3GD20_struct* L3DG20_Data);
 
 void l3gd20_init(void);
 

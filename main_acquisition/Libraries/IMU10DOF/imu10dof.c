@@ -34,7 +34,7 @@ uint8_t i2c_wait_busy(void) {
 	}
 	return 0;
 }
-
+////////////////CHECK HERE, WHAT DOES i2c start, voir page 23 pdf
 uint8_t i2c_start(uint8_t address, uint8_t direction, uint8_t ack) {
 	// generate i2c start pulse
 	IMU10DOF_I2C->CR1 |= I2C_CR1_START;
