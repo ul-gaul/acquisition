@@ -75,7 +75,7 @@ int main(void) {
 	/* Init L3GD20 sensor */
 	if (L3GD20_Init(L3GD20_Scale_2000) != L3GD20_Result_Ok) {
 		/* Sensor error */
-		while (1);
+		//while (1);
 	}
 
 //	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc

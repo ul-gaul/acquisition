@@ -35,7 +35,7 @@
 #define GYRO_SENSITIVITY_500DPS (0.0175F)
 #define GYRO_SENSITIVITY_2000DPS (0.070F)
 
-#define GYRO_WHO_AM_I 0xD4
+#define GYRO_WHO_AM_I 0xD7
 
 /*
  * Registers addess map

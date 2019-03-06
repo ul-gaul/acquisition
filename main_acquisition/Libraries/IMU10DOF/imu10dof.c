@@ -73,8 +73,9 @@ uint8_t i2c_start(uint8_t address, uint8_t direction, uint8_t ack) {
 }
 
 uint8_t i2c_stop(void) {
-	// wait till transmitter not empty
+	// wait till transmitter is empty
 	i2c_timeout = I2C_TIMEOUT;
+	// tant que le 7 eme bit de SR1 est a zero OU que le deuxieme bit de SR1 est a zero
 	while (((!(IMU10DOF_I2C->SR1 & I2C_SR1_TXE)) || (!(IMU10DOF_I2C->SR1 & I2C_SR1_BTF)))) {
 		if(--i2c_timeout == 0) {
 			return 1;
@@ -87,12 +88,12 @@ uint8_t i2c_stop(void) {
 	return 0;
 }
 
-uint8_t i2c_read(uint8_t address, uint8_t reg) {
+uint8_t L3GD20_i2c_read(uint8_t address, uint8_t reg) {
 	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
 	i2c_write_data(reg);
 	i2c_stop();
 	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_DISABLE);
-	return i2c_read_nack();
+	return L3GD20_i2c_read_nack();
 }
 
 uint8_t i2c_read_no_register(uint8_t address) {
@@ -147,6 +148,33 @@ uint8_t i2c_read_nack(void) {
 	/* Read data */
 	data = IMU10DOF_I2C->DR;
 
+	/* Return data */
+	return data;
+}
+
+
+uint8_t L3GD20_i2c_read_nack(void) {
+	uint8_t data;
+
+	/* Disable ACK */
+	IMU10DOF_I2C->CR1 &= ~I2C_CR1_ACK;
+
+
+	/* Wait till received */
+	i2c_timeout = I2C_TIMEOUT;
+	while (!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
+		if (--i2c_timeout == 0x00) {
+			return 1;
+		} else {
+			i2c_delay_ms(1);
+		}
+	}
+
+	/* Read data */
+	data = IMU10DOF_I2C->DR;
+
+	/* Generate stop */
+	IMU10DOF_I2C->CR1 |= I2C_CR1_STOP;
 	/* Return data */
 	return data;
 }

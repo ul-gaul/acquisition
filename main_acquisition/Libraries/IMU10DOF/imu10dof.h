@@ -39,11 +39,16 @@ uint8_t imu10dof_check_i2c_connection(uint8_t address);
 void i2c_write_data(uint8_t data);
 void i2c_write_no_register(uint8_t address, uint8_t data);
 
+uint8_t L3GD20_i2c_read(uint8_t address, uint8_t reg);
+uint8_t i2c_read_ack(void);
+
 void i2c_read_multi(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count);
 
 void i2c_read_multi_no_register(uint8_t address, uint8_t* data, uint16_t count);
 
 uint8_t i2c_read_nack(void);
+
+uint8_t L3GD20_i2c_read_nack(void);
 
 void i2c_write(uint8_t address, uint8_t reg, uint8_t data);
 
