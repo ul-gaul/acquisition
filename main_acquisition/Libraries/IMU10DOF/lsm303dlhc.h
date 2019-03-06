@@ -68,7 +68,44 @@
 #define LSM_TEMP_OUT_H_M 0x31
 #define LSM_TEMP_OUT_L_M 0x32
 
+/**
+ * @brief
+ * 	LSM303DLHC main struct
+ * 	Contains XYZ accelerations and XYZ magnetic field measures
+ */
+typedef struct {
+    short acc_x;
+    short acc_y;
+    short acc_z;
+    short mag_x; 
+    short mag_y; 
+    short mag_z; 
+} LSM303DLHC_struct;
 
-void lsm303dlhc_init(void);
+/**
+ * @brief
+ * 	LSM303DLHC Results enumerations
+ */
+typedef struct {
+    LSM303DLHC_Result_Ok,
+    LSM303DLHC_Result_Error
+} LSM303DLHC_result;
+
+/**
+ * @brief Initializes the sensor
+ */
+LSM303DLHC_result lsm303dlhc_init(void);
+
+/**
+ * @brief Read the acceleration measures
+ */
+LSM303DLHC_result lsm303dlhc_read_acceleration(LSM303DLHC_struct* data);
+
+
+/**
+ * @brief Read the magnetic field measures
+ */
+LSM303DLHC_result lsm303dlhc_read_magneticfield(LSM303DLHC_struct* data);
+
 
 #endif /* IMU10DOF_LSM303DLHC_H_ */

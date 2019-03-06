@@ -7,6 +7,17 @@
 
 #include "lsm303dlhc.h"
 
-void lsm303dlhc_init(void) {
+LSM303DLHC_result lsm303dlhc_init(void) {
 
+    return LSM303DLHC_Result_Ok;
+}
+
+LSM303DLHC_result lsm303dlhc_read_acceleration(LSM303DLHC_struct* data) {
+    
+    return LSM303DLHC_Result_Ok;
+}
+
+LSM303DLHC_result lsm303dlhc_read_magneticfield(LSM303DLHC_struct* data) {
+
+    return LSM303DLHC_Result_Ok;
 }
