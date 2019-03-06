@@ -86,7 +86,7 @@ typedef struct {
  * @brief
  * 	LSM303DLHC Results enumerations
  */
-typedef struct {
+typedef enum {
     LSM303DLHC_Result_Ok,
     LSM303DLHC_Result_Error
 } LSM303DLHC_result;
