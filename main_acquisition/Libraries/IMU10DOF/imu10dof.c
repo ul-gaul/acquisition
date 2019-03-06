@@ -296,7 +296,11 @@ uint8_t imu10dof_init(struct BMP180_struct* bmp180_data, void (*delay_func) (uin
 	i2c_delay_ms = delay_func;
 	// init all the devices
 	bmp180_init((BMP180_struct *) bmp180_data);
-	l3gd20_init();
+	/* Init L3GD20 sensor */
+	if (L3GD20_Init(L3GD20_Scale_2000) != L3GD20_Result_Ok) {
+		/* Sensor error */
+		//while (1);
+	}
 	lsm303dlhc_init();
 
 	return 0;

@@ -112,6 +112,4 @@ L3GD20_result L3GD20_Init(L3GD20_scale scale);
  */
 L3GD20_result L3GD20_Read(L3GD20_struct* L3DG20_Data);
 
-void l3gd20_init(void);
-
 #endif /* IMU10DOF_L3GD20_H_ */

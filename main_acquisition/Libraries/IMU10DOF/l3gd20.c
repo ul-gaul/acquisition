@@ -7,9 +7,6 @@
 
 #include "l3gd20.h"
 
-void l3gd20_init(void) {
-
-}
 
 /* Private variables */
 L3GD20_scale L3GD20_INT_Scale;

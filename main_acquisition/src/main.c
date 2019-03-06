@@ -72,11 +72,7 @@ int main(void) {
 
 	imu10dof_init((struct BMP180_struct *) &bmp180_data, &delay_ms);
 	bmp180_data.delay_func = &delay_ms;
-	/* Init L3GD20 sensor */
-	if (L3GD20_Init(L3GD20_Scale_2000) != L3GD20_Result_Ok) {
-		/* Sensor error */
-		//while (1);
-	}
+
 
 //	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
