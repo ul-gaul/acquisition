@@ -5,6 +5,8 @@
  *      Author: laplace
  */
 
+#include "imu10dof.h"
+
 #ifndef IMU10DOF_LSM303DLHC_H_
 #define IMU10DOF_LSM303DLHC_H_
 
@@ -69,18 +71,31 @@
 #define LSM_TEMP_OUT_H_M 0x31 // 8 bits
 #define LSM_TEMP_OUT_L_M 0x32 // 0bxxxx---- where "x" is either 0 or 1 and - is garbage
 
+/* Acceleration sensor constants */
+#define LSM_ACC_RES 0.06103515625
+#define LSM_ACC_G_GAIN_2g 0x0
+#define LSM_ACC_G_GAIN_4g 0x1
+#define LSM_ACC_G_GAIN_8g 0x2
+#define LSM_ACC_G_GAIN_16g 0x3
+#define LSM_ACC_G_GAIN LSM_ACC_G_GAIN_16g
+
+
 /**
  * @brief
  * 	LSM303DLHC main struct
  * 	Contains XYZ accelerations and XYZ magnetic field measures
  */
 typedef struct {
-    short acc_x;
-    short acc_y;
-    short acc_z;
+    short acc_x_uncomp;
+    short acc_y_uncomp;
+    short acc_z_uncomp;
+    float acc_x;
+    float acc_y;
+    float acc_z;
     short mag_x; 
     short mag_y; 
     short mag_z; 
+    short temperature;
 } LSM303DLHC_struct;
 
 /**
@@ -108,5 +123,9 @@ LSM303DLHC_result lsm303dlhc_read_acceleration(LSM303DLHC_struct* data);
  */
 LSM303DLHC_result lsm303dlhc_read_magneticfield(LSM303DLHC_struct* data);
 
+/**
+ * @brief Read the temperature
+ */
+LSM303DLHC_result lsm303dlhc_read_temperature(LSM303DLHC_struct* data);
 
 #endif /* IMU10DOF_LSM303DLHC_H_ */

@@ -9,7 +9,6 @@
 #define IMU10DOF_L3GD20_H_
 #include "imu10dof.h"
 #include "stm32f4xx.h"
-#include "imu10dof.h"
 #include "math.h"
 
 #define L3GD20H_I2c_SLAVE_ADDRESS 0b1101011 // 1101010 si SDO est connecter au ground, nous sommes connecter au VCC donc 1101011

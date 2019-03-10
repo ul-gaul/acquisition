@@ -57,7 +57,7 @@ int main(void) {
 	// global BMP180, L3GD20 and LSM303 structs are declared here
 	BMP180_struct bmp180_data;
 	L3GD20_struct l3gd20_data;
-//	lsm303_struct lsm303_data;
+	LSM303DLHC_struct lsm303_data;
 
 //	init_leds();
 	init_TIM2();
@@ -135,6 +135,11 @@ int main(void) {
 //		updateGps(&gpsDataStruct);
 		// read IMU10DOF devices
 		L3GD20_Read(&l3gd20_data);
+
+		lsm303dlhc_read_acceleration(&lsm303_data);
+		lsm303dlhc_read_magneticfield(&lsm303_data);
+		lsm303dlhc_read_temperature(&lsm303_data);
+
 		bmp180_start_temperature(&bmp180_data);
 		bmp180_read_temperature(&bmp180_data);
 		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
