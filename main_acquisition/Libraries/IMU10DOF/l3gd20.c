@@ -11,21 +11,10 @@
 /* Private variables */
 L3GD20_scale L3GD20_INT_Scale;
 
-/* Private functions */
-extern void L3GD20_INT_InitPins(void);
-extern uint8_t L3GD20_INT_ReadSPI(uint8_t address);
-extern void L3GD20_INT_WriteSPI(uint8_t address, uint8_t data);
-
 /* Public */
 L3GD20_result L3GD20_Init(L3GD20_scale scale) {
-	/* Init CS pin */
-	//3GD20_INT_InitPins();
-	/* Init SPI */
-	//SPI_Init(L3GD20_SPI, L3GD20_SPI_PINSPACK);
-	/* Check if sensor is L3GD20 */
-	// GYRO_WHO_AM_I = value of the register at the address GYRO_REGISTER_WHO_AM_I
 	uint8_t resultData;
-	resultData = L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_WHO_AM_I);
+	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_WHO_AM_I);
 	if (resultData != GYRO_WHO_AM_I) {
 		/* Sensor connected is not L3GD20 */
 		return L3GD20_Result_Error;
@@ -61,21 +50,21 @@ L3GD20_result L3GD20_Read(L3GD20_struct* L3DG20_Data) {
 
 	unsigned char resultData;
 	/* Read X axis */
-	resultData= L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_L);
+	resultData= i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_L);
 	L3DG20_Data->X = resultData;
-	resultData = L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_H);
+	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_H);
 	L3DG20_Data->X |= resultData << 8;
 
 	/* Read Y axis */
-	resultData = L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Y_L);
+	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Y_L);
 	L3DG20_Data->Y = resultData;
-	resultData = L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Y_H);
+	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Y_H);
 	L3DG20_Data->Y |= resultData << 8;
 
 	/* Read Z axis */
-	resultData = L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Z_L);
+	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Z_L);
 	L3DG20_Data->Z = resultData;
-	resultData = L3GD20_i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Z_H);
+	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Z_H);
 	L3DG20_Data->Z |= resultData << 8;
 
 	/* Set sensitivity scale correction */

@@ -88,7 +88,7 @@ uint8_t i2c_stop(void) {
 	return 0;
 }
 
-uint8_t L3GD20_i2c_read(uint8_t address, uint8_t reg) {
+uint8_t i2c_read(uint8_t address, uint8_t reg) {
 	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_DISABLE);
 	i2c_write_data(reg);
 	i2c_stop();
