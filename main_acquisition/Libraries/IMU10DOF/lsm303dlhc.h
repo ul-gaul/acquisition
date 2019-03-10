@@ -14,13 +14,13 @@
 
 #define LSM_MAG_ADDRESS_R 0x3D
 #define LSM_MAG_ADDRESS_W 0x3C
-
-#define LSM_CTRL_REG1_A 0x20
-#define LSM_CTRL_REG2_A 0x21
-#define LSM_CTRL_REG3_A 0x22
-#define LSM_CTRL_REG4_A 0x23
-#define LSM_CTRL_REG5_A 0x24
-#define LSM_CTRL_REG6_A 0x25
+/////////////////SECTION ABOUT ACCELEROMETER
+#define LSM_CTRL_REG1_A 0x20 // 0x77 to set to = Normal / low-power mode (400 Hz), 0x97 set to = Normal (1.344 kHz) / low-power mode (5.376 kHz)
+#define LSM_CTRL_REG2_A 0x21 // 0x00 basically = filter is bypassed, otherwise we could put 0x0F
+#define LSM_CTRL_REG3_A 0x22 // 0x00 to disable interrupt fonctionnality, 0xFF to enable them all
+#define LSM_CTRL_REG4_A 0x23 // 0x88 +-2g, 0xB8 +-16g enable data integrity + high resolution mode 0x80 to disable high resolution
+#define LSM_CTRL_REG5_A 0x24 // 0x80 this will erase memory content on reboot 0x00 could do
+#define LSM_CTRL_REG6_A 0x25 // 0x10 to erase memory content 0x00 could do
 
 #define LSM_REFERENCE_A 0x26
 
@@ -33,11 +33,11 @@
 #define LSM_OUT_Z_L_A 0x2C
 #define LSM_OUT_Z_H_A 0x2D
 
-#define LSM_FIFO_CTRL_REG_A 0x2E
+#define LSM_FIFO_CTRL_REG_A 0x2E //0x00 disable fifo
 #define LSM_FIFO_SRC_REG_A 0x2F
 
-#define LSM_INT1_CFG_A 0x30
-#define LSM_INT1_SRC_A 0x31
+#define LSM_INT1_CFG_A 0x30 // 0x00 ????? things about interrupts
+#define LSM_INT1_SRC_A 0x31 // ???? interrupts things
 #define LSM_INT1_THS_A 0x32
 #define LSM_INT1_DURATION_A 0x33
 #define LSM_INT2_CFG_A 0x34
@@ -50,23 +50,24 @@
 #define LSM_TIME_LIMIT_A 0x3B
 #define LSM_TIME_LATENCY_A 0x3C
 #define LSM_TIME_WINDOW_A 0x3D
-
-#define LSM_CRA_REG_M 0x00
-#define LSM_CRB_REG_M 0x01
-#define LSM_MR_REG_M 0x02
+////////END SECTION ABOUT ACCELEROMETER
+////////SECTION ABOUT MAGNETOMETER
+#define LSM_CRA_REG_M 0x00 // 0x9C -> Enable temperature, set the rate at which data is written to all three data output registers to 220Hz
+#define LSM_CRB_REG_M 0x01 // 0xE0 Sensor input field range [Gauss] : +- 1.3; Gain X, Y, and Z [LSB/Gauss] : 1100, Gain Z [LSB/Gauss] : 980
+#define LSM_MR_REG_M 0x02 // 0x00 -> Continuous-conversion mode
 #define LSM_OUT_X_H_M 0x03
 #define LSM_OUT_X_L_M 0x04
 #define LSM_OUT_Z_H_M 0x05
 #define LSM_OUT_Z_L_M 0x06
 #define LSM_OUT_Y_H_M 0x07
 #define LSM_OUT_Y_L_M 0x08
-#define LSM_SR_REG_M 0x09
-#define LSM_IRA_REG_M 0x0A
-#define LSM_IRB_REG_M 0x0B
-#define LSM_IRC_REG_M 0x0C
+#define LSM_SR_REG_M 0x09 // if LSM_SR_REG_M | 0x01 == 1 This bit is when a new set of measurements is available
+#define LSM_IRA_REG_M 0x0A // ??
+#define LSM_IRB_REG_M 0x0B // ??
+#define LSM_IRC_REG_M 0x0C // ??
 
-#define LSM_TEMP_OUT_H_M 0x31
-#define LSM_TEMP_OUT_L_M 0x32
+#define LSM_TEMP_OUT_H_M 0x31 // 8 bits
+#define LSM_TEMP_OUT_L_M 0x32 // 0bxxxx---- where "x" is either 0 or 1 and - is garbage
 
 /**
  * @brief
