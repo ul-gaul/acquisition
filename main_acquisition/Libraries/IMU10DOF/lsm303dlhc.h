@@ -79,6 +79,17 @@
 #define LSM_ACC_G_GAIN_16g 0x3
 #define LSM_ACC_G_GAIN LSM_ACC_G_GAIN_16g
 
+#if LSM_ACC_G_GAIN == LSM_ACC_G_GAIN_2g
+#define LSM_ACC_BIT_RES 1
+#elif LSM_ACC_G_GAIN == LSM_ACC_G_GAIN_4g
+#define LSM_ACC_BIT_RES 2
+#elif LSM_ACC_G_GAIN == LSM_ACC_G_GAIN_8g
+#define LSM_ACC_BIT_RES 4
+#elif LSM_ACC_G_GAIN == LSM_ACC_G_GAIN_16g
+#define LSM_ACC_BIT_RES 12
+#endif
+
+
 
 /**
  * @brief

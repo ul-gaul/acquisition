@@ -7,13 +7,6 @@
 
 #include "lsm303dlhc.h"
 
-uint8_t lsm_get_bit_resolution(uint8_t x) {
-	if(x == 0x0) return 1;
-	else if(x == 0x1) return 2;
-	else if(x == 0x2) return 4;
-	else if(x == 0x3) return 12;
-	else return 0;
-}
 
 LSM303DLHC_result lsm303dlhc_init(void) {
 
@@ -74,9 +67,9 @@ LSM303DLHC_result lsm303dlhc_read_acceleration(LSM303DLHC_struct* data) {
     data->acc_z_uncomp |= value << 8;
 
     /* compensate values */
-    data->acc_x = data->acc_x_uncomp * LSM_ACC_RES * lsm_get_bit_resolution(LSM_ACC_G_GAIN);
-    data->acc_y = data->acc_y_uncomp * LSM_ACC_RES * lsm_get_bit_resolution(LSM_ACC_G_GAIN);
-    data->acc_z = data->acc_z_uncomp * LSM_ACC_RES * lsm_get_bit_resolution(LSM_ACC_G_GAIN);
+    data->acc_x = data->acc_x_uncomp * LSM_ACC_RES * LSM_ACC_BIT_RES;
+    data->acc_y = data->acc_y_uncomp * LSM_ACC_RES * LSM_ACC_BIT_RES;
+    data->acc_z = data->acc_z_uncomp * LSM_ACC_RES * LSM_ACC_BIT_RES;
     /* Return OK */
     return LSM303DLHC_Result_Ok;
 }
