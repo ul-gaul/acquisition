@@ -55,7 +55,7 @@
 ////////END SECTION ABOUT ACCELEROMETER
 ////////SECTION ABOUT MAGNETOMETER
 #define LSM_CRA_REG_M 0x00 // 0x9C -> Enable temperature, set the rate at which data is written to all three data output registers to 220Hz
-#define LSM_CRB_REG_M 0x01 // 0xE0 Sensor input field range [Gauss] : +- 1.3; Gain X, Y, and Z [LSB/Gauss] : 1100, Gain Z [LSB/Gauss] : 980
+#define LSM_CRB_REG_M 0x01 // 0x20 Sensor input field range [Gauss] : +- 1.3; Gain X, Y, and Z [LSB/Gauss] : 1100, Gain Z [LSB/Gauss] : 980
 #define LSM_MR_REG_M 0x02 // 0x00 -> Continuous-conversion mode
 #define LSM_OUT_X_H_M 0x03
 #define LSM_OUT_X_L_M 0x04
