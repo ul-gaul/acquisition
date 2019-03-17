@@ -100,13 +100,17 @@ LSM303DLHC_result lsm303dlhc_read_magneticfield(LSM303DLHC_struct* data) {
 
 LSM303DLHC_result lsm303dlhc_read_temperature(LSM303DLHC_struct* data) {
     uint8_t value;
+    int8_t sign = 1;
 
     /* Read temperature */ // la temperature est sur 12 bits
     value = i2c_read(LSM_MAG_ADDRESS_R, LSM_TEMP_OUT_L_M);
     data->temperature = value;
     value = i2c_read(LSM_MAG_ADDRESS_R, LSM_TEMP_OUT_H_M);
     data->temperature |= value << 8;
-    data->temperature = data->temperature >> 4; //affect le bit de sign, TODO : Make something that doesn't affect the sign bit
+    if (data->temperature < 0)
+	sign = -1;
+    data->temperature = data->temperature >> 4;
+    data->temperature *= sign;
 
     /* Return OK */
     return LSM303DLHC_Result_Ok;

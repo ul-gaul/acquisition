@@ -106,7 +106,7 @@ typedef struct {
     short mag_x; 
     short mag_y; 
     short mag_z; 
-    short temperature;
+    int16_t temperature;
 } LSM303DLHC_struct;
 
 /**
