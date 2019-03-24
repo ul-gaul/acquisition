@@ -25,29 +25,46 @@ static uint32_t i2c_timeout;
 uint8_t i2c_wait_busy(void) {
 	i2c_timeout = I2C_TIMEOUT;
 	while(!(IMU10DOF_I2C->SR1 & I2C_SR1_SB)) {
-		if(--i2c_timeout == 0) return 1;
+		if(--i2c_timeout == 0) {
+			return 1;
+		} else {
+			// wait 1 ms
+			i2c_delay_ms(1);
+		}
 	}
 	return 0;
 }
-
+////////////////CHECK HERE, WHAT DOES i2c start, voir page 23 pdf
 uint8_t i2c_start(uint8_t address, uint8_t direction, uint8_t ack) {
 	// generate i2c start pulse
 	IMU10DOF_I2C->CR1 |= I2C_CR1_START;
+	i2c_delay_ms(1);
 	// wait for i2c to be busy
 	if(i2c_wait_busy()) return 1;
 	// enable ack if applicable
 	if(ack) IMU10DOF_I2C->CR1 |= I2C_CR1_ACK;
+	i2c_delay_ms(1);
 	// send write / read bit
 	i2c_timeout = I2C_TIMEOUT;
 	if(direction == I2C_TRANSMITTER_MODE) {
 		IMU10DOF_I2C->DR = address & ~I2C_OAR1_ADD0;
+		i2c_delay_ms(1);
 		while(!(IMU10DOF_I2C->SR1 & I2C_SR1_ADDR)) {
-			if(--i2c_timeout == 0) return 1;
+			if(--i2c_timeout == 0) {
+				return 1;
+			} else {
+				i2c_delay_ms(1);
+			}
 		}
 	} else if(direction == I2C_RECEIVER_MODE) {
 		IMU10DOF_I2C->DR = address | I2C_OAR1_ADD0;
+		i2c_delay_ms(1);
 		while(!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) {
-			if(--i2c_timeout == 0) return 1;
+			if(--i2c_timeout == 0) {
+				return 1;
+			} else {
+				i2c_delay_ms(1);
+			}
 		}
 	}
 	// read status register to clear ADDR flag
@@ -56,10 +73,15 @@ uint8_t i2c_start(uint8_t address, uint8_t direction, uint8_t ack) {
 }
 
 uint8_t i2c_stop(void) {
-	// wait till transmitter not empty
+	// wait till transmitter is empty
 	i2c_timeout = I2C_TIMEOUT;
+	// tant que le 7 eme bit de SR1 est a zero OU que le deuxieme bit de SR1 est a zero
 	while (((!(IMU10DOF_I2C->SR1 & I2C_SR1_TXE)) || (!(IMU10DOF_I2C->SR1 & I2C_SR1_BTF)))) {
-		if(--i2c_timeout == 0) return 1;
+		if(--i2c_timeout == 0) {
+			return 1;
+		} else {
+			i2c_delay_ms(1);
+		}
 	}
 	// generate stop
 	IMU10DOF_I2C->CR1 |= I2C_CR1_STOP;
@@ -71,7 +93,7 @@ uint8_t i2c_read(uint8_t address, uint8_t reg) {
 	i2c_write_data(reg);
 	i2c_stop();
 	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_DISABLE);
-	return i2c_read_nack();
+	return L3GD20_i2c_read_nack();
 }
 
 uint8_t i2c_read_no_register(uint8_t address) {
@@ -92,6 +114,8 @@ uint8_t i2c_read_ack(void) {
 	while (!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
 		if (--i2c_timeout == 0x00) {
 			return 1;
+		} else {
+			i2c_delay_ms(1);
 		}
 	}
 
@@ -116,6 +140,8 @@ uint8_t i2c_read_nack(void) {
 	while (!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
 		if (--i2c_timeout == 0x00) {
 			return 1;
+		} else {
+			i2c_delay_ms(1);
 		}
 	}
 
@@ -126,20 +152,50 @@ uint8_t i2c_read_nack(void) {
 	return data;
 }
 
+
+uint8_t L3GD20_i2c_read_nack(void) {
+	uint8_t data;
+
+	/* Disable ACK */
+	IMU10DOF_I2C->CR1 &= ~I2C_CR1_ACK;
+
+
+	/* Wait till received */
+	i2c_timeout = I2C_TIMEOUT;
+	while (!I2C_CheckEvent(IMU10DOF_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
+		if (--i2c_timeout == 0x00) {
+			return 1;
+		} else {
+			i2c_delay_ms(1);
+		}
+	}
+
+	/* Read data */
+	data = IMU10DOF_I2C->DR;
+
+	/* Generate stop */
+	IMU10DOF_I2C->CR1 |= I2C_CR1_STOP;
+	/* Return data */
+	return data;
+}
+
 void i2c_write_data(uint8_t data) {
 	/* Wait till I2C is not busy anymore */
 	i2c_timeout = I2C_TIMEOUT;
 	while (!(IMU10DOF_I2C->SR1 & I2C_SR1_TXE) && i2c_timeout) {
 		i2c_timeout--;
+		i2c_delay_ms(1);
 	}
 
 	/* Send I2C data */
 	IMU10DOF_I2C->DR = data;
+	i2c_delay_ms(1);
 }
 
 void i2c_read_multi(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
 	i2c_start(address, I2C_TRANSMITTER_MODE, I2C_ACK_ENABLE);
 	i2c_write_data(reg);
+	// insert delay here
 	i2c_start(address, I2C_RECEIVER_MODE, I2C_ACK_ENABLE);
 	while (count--) {
 		if (!count) {
@@ -234,12 +290,17 @@ void imu10dof_i2c_init(void) {
 	I2C_Init(IMU10DOF_I2C, &i2c_init_struct);
 }
 
-uint8_t imu10dof_init(struct BMP180_struct* bmp180_data) {
+uint8_t imu10dof_init(struct BMP180_struct* bmp180_data, void (*delay_func) (uint32_t)) {
 	// init the i2c bus
 	imu10dof_i2c_init();
+	i2c_delay_ms = delay_func;
 	// init all the devices
 	bmp180_init((BMP180_struct *) bmp180_data);
-	l3gd20_init();
+	/* Init L3GD20 sensor */
+	if (L3GD20_Init(L3GD20_Scale_2000) != L3GD20_Result_Ok) {
+		/* Sensor error */
+		//while (1);
+	}
 	lsm303dlhc_init();
 
 	return 0;
