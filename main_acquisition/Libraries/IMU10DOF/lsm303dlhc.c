@@ -107,11 +107,7 @@ LSM303DLHC_result lsm303dlhc_read_temperature(LSM303DLHC_struct* data) {
     data->temperature = value;
     value = i2c_read(LSM_MAG_ADDRESS_R, LSM_TEMP_OUT_H_M);
     data->temperature |= value << 8;
-    if (data->temperature < 0)
-	sign = -1;
     data->temperature = data->temperature >> 4;
-    data->temperature *= sign;
-
     /* Return OK */
     return LSM303DLHC_Result_Ok;
 }
