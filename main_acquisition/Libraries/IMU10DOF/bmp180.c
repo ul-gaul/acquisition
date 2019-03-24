@@ -40,7 +40,7 @@ BMP180_Results bmp180_init(BMP180_struct* data) {
 	uint8_t i = 0;
 
 	// test if BMP180 is connected
-	if(!imu10dof_check_i2c_connection(BMP180_I2C_ADDRW)) {
+	if(imu10dof_check_i2c_connection(BMP180_I2C_ADDRW) == 0) {
 		return BMP180_Res_NoConnect;
 	}
 	//	get default values from EEPROM, EEPROM starts at 0xAA address, read 22 bytes

@@ -43,10 +43,11 @@ NVIC_InitTypeDef NVIC_InitStruct;
 
 typedef struct {
 	// GPS values
-	float latitude;
-	float longitude;
+	double latitude;
+	double longitude;
 	char NSIndicator;
 	char EWIndicator;
+	double UTCTime;
 } gpsData;
 void DMA1_Stream5_IRQHandler(void);
 void USART1_IRQHandler(void);

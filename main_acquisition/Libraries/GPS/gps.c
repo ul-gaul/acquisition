@@ -121,17 +121,30 @@ unsigned char customSplit() // TODO : implementing a prettier way to split the c
 	return 1;
 }
 
+
+/*
+ * updateGps is a fonction that update the gpsStruct that it receive with data from the gps
+ * it will take the received latitude, longitude, EW and NS indicator from the gps and update it
+ * in the gpsData struct that it receive in function arg
+ */
+
+//NOTE TO YOURSELF : S'assurer que les subsetlattitude on bien un nombre et non une lettre
+//sinon la conversion avec atof se transforme en 0.000
 void updateGps(gpsData *gpsStruct)
 {
-    unsigned char gpsDataString[80] = {0}; //important to put the array size from here
+    unsigned char gpsDataString[80]; //important to put the array size from here
+    memset(gpsDataString, 0, 80);
 	USART_Parser(gpsDataString, 80); // into this function right there
 	unsigned char getIn = 0;
+	unsigned short utcGetIn = 0;
 	unsigned char currentStart = 7; //Cette variable est l'index qui indique la premiere position de la latitude dans le gpsDataString array
 	if(gpsDataString[4] == 'G') // check if data is GPGGA ex gpsDataString[0 to 4] = "$GPGG"
 	{
 		getIn = 1;
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
+		unsigned char subsetCharArray[20];
+	    memset(subsetCharArray, 0, 20);
 		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
@@ -142,14 +155,21 @@ void updateGps(gpsData *gpsStruct)
 				//string ex : "$GPGGA,111636.932,2447.0949,N,12100.5223,E,1,11,0.8,118.2,M,,,,0000*02<CR><LF>"
 				GTFO = 1;
 			}
+			else
+			{
+				subsetCharArray[i] = temp;
+			}
 			i++;
 		}
+		gpsStruct->UTCTime = (double)atof((char *)subsetCharArray);
 	}
 	else if(gpsDataString[4] == 'M') // check if data is GPGMR
 	{
 		getIn = 1;
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
+		unsigned char subsetCharArray[20];
+	    memset (subsetCharArray, 0, 20);
 		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
@@ -160,17 +180,31 @@ void updateGps(gpsData *gpsStruct)
 				//string ex : "$GPRMC,111636.932,A,2447.0949,N,12100.5223,E,000.0,000.0,030407,,,A*61<CR><LF>"
 				GTFO = 1;
 			}
+			else
+			{
+				subsetCharArray[i] = temp;
+			}
 			i++;
 		}
+		gpsStruct->UTCTime = (double)atof((char *)subsetCharArray);
 	}
 	else if(gpsDataString[5] == 'L') // check if data is GPGLL
 	{
 		getIn = 1;
-		currentStart = 7;
+		currentStart = 7; // string ex: "$GPGLL,2447.0944,N,12100.5213,E,112609.932,A,A*57<CR><LF>"
+		utcGetIn = 1;
 	}
 	if(getIn == 1) // String parsing section si dans gpsDataString on a GPRMC GPGLL GPGGA
 	{
-		unsigned char subsetLatitude[20] = {0};
+		///those 4 value are there to check at the end if there was corruption or not
+		double latTemp = 0.0f;
+		double lonTemp = 0.0f;
+		char NSIndicatorTemp;
+		char EWIndicatorTemp;
+		////
+
+		unsigned char subsetLatitude[20];
+	    memset (subsetLatitude, 0, 20);
 		unsigned char i = 0;
 		unsigned char GTFO = 0;
 		while(i < 20 && GTFO == 0)
@@ -187,11 +221,12 @@ void updateGps(gpsData *gpsStruct)
 			}
 			i++;
 		}
-		gpsStruct->latitude = atof((char *)subsetLatitude);
-		gpsStruct->NSIndicator = gpsDataString[currentStart]; // la position retourne sois N ou S
+		latTemp = (double)atof((char *)subsetLatitude); //return a double from a char table
+		NSIndicatorTemp = gpsDataString[currentStart]; // should be either 'N' or 'S'
 		currentStart += 2; // +2 because you move past the comma and get the first position of the longitude
 		GTFO = 0;
 		i = 0;
+	    memset (subsetLatitude, 0, 20); // reuse the same char array as before, but reset all its value just to be sure
 		while(i < 20 && GTFO == 0)
 		{
 			unsigned char temp = gpsDataString[currentStart+i];
@@ -206,8 +241,42 @@ void updateGps(gpsData *gpsStruct)
 			}
 			i++;
 		}
-		gpsStruct->longitude = (float)atof((char *)subsetLatitude);
-		gpsStruct->EWIndicator = gpsDataString[currentStart]; // la position retourne sois E ou W
+		lonTemp = (double)atof((char *)subsetLatitude); //return a double from a char table
+		EWIndicatorTemp = gpsDataString[currentStart]; // should be either 'E' or 'W'
+
+		if (utcGetIn == 1) // only enter if the type is GPGLL
+		{
+			//The role of the following is to extract the time from the GPGLL data string/char array
+			currentStart += 2;
+			GTFO = 0;
+			unsigned char i = 0;
+			unsigned char subsetCharArray[20];
+		    memset(subsetCharArray, 0, 20);
+			while(i < 20 && GTFO == 0)
+			{
+				unsigned char temp = gpsDataString[currentStart+i];
+				if(temp == ',')
+				{
+					currentStart += i + 1;
+					//string ex : "$GPGGA,111636.932,2447.0949,N,12100.5223,E,1,11,0.8,118.2,M,,,,0000*02<CR><LF>"
+					GTFO = 1;
+				}
+				else
+				{
+					subsetCharArray[i] = temp;
+				}
+				i++;
+			}
+			gpsStruct->UTCTime = (double)atof((char *)subsetCharArray);
+		}
+
+		if ((EWIndicatorTemp == 'E' || EWIndicatorTemp == 'W') && (NSIndicatorTemp == 'N' || NSIndicatorTemp == 'S')) // test if data is corrupt or not
+		{
+			gpsStruct->latitude = latTemp;
+			gpsStruct->NSIndicator = NSIndicatorTemp; // la position retourne sois N ou S
+			gpsStruct->longitude = lonTemp;
+			gpsStruct->EWIndicator = EWIndicatorTemp; // la position retourne sois E ou W
+		}
 	}
 }
 /////////

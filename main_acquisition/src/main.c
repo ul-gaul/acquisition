@@ -131,22 +131,26 @@ int main(void) {
                     Read = 0;
                 }
             }
-	    //fonction qui met a jour les donner dans le gpsDataStruct
-	    updateGps(&gpsDataStruct);
-	    // read IMU10DOF devices
-	    L3GD20_Read(&l3gd20_data);
+    //fonction qui met a jour les donner dans le gpsDataStruct
+    updateGps(&gpsDataStruct);
+    rd.timestamp = gpsDataStruct.UTCTime;
+		rd.latitude = gpsDataStruct.latitude;
+		rd.longitude = gpsDataStruct.longitude;
+    // read IMU10DOF devices
+    L3GD20_Read(&l3gd20_data);
 
-	    lsm303dlhc_read_acceleration(&lsm303_data);
-	    lsm303dlhc_read_magneticfield(&lsm303_data);
-	    lsm303dlhc_read_temperature(&lsm303_data);
+    lsm303dlhc_read_acceleration(&lsm303_data);
+    lsm303dlhc_read_magneticfield(&lsm303_data);
+    lsm303dlhc_read_temperature(&lsm303_data);
 
-	    bmp180_start_temperature(&bmp180_data);
-	    bmp180_read_temperature(&bmp180_data);
-	    bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
-	    bmp180_read_pressure(&bmp180_data);
-	    // update rocket packet with imu10dof data
-	    rp.data.altitude = bmp180_data.altitude;
-	    rp.data.temperature = bmp180_data.temperature;
+    bmp180_start_temperature(&bmp180_data);
+    bmp180_read_temperature(&bmp180_data);
+    bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
+    bmp180_read_pressure(&bmp180_data);
+    // update rocket packet with imu10dof data
+    rp.data.altitude = bmp180_data.altitude;
+    rp.data.temperature = bmp180_data.temperature;
+    }
 	}
 }
 

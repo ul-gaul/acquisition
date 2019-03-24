@@ -13,31 +13,31 @@
 #define ROCKET_PACKET_ROCKET_PACKET_H_
 
 // size of the packet including the checksum
-#define ROCKET_PACKET_SIZE 58
+#define ROCKET_PACKET_SIZE 70
 #define ROCKET_PACKET_START 's'
 
 typedef struct {
-	unsigned long timestamp;
+	double timestamp; // 8
 	// GPS values
-	float latitude;
-	float longitude;
+	double latitude; // 16
+	double longitude; // 24
 	// 10DOF values
-	float altitude;
-	float temperature;
-	float x_accel;
-	float y_accel;
-	float z_accel;
-	float x_magnet;
-	float y_magnet;
-	float z_magnet;
-	float x_gyro;
-	float y_gyro;
-	float z_gyro;
+	float altitude; // 28
+	float temperature; // 32
+	float x_accel;// 36
+	float y_accel;// 40
+	float z_accel; // 44
+	float x_magnet; // 48
+	float y_magnet; // 52
+	float z_magnet; // 56
+	float x_gyro; // 60
+	float y_gyro; // 64
+	float z_gyro; // 68
 } RocketData;
 
 typedef struct {
-	char start_char;
 	RocketData data;
+	char start_char;
 	uint8_t checksum;
 } RocketPacket;
 
