@@ -151,8 +151,8 @@ int main(void) {
     rp.data.altitude = bmp180_data.altitude;
     rp.data.temperature = bmp180_data.temperature;
     }
-	}
 }
+
 
 /* Private functions */
 
