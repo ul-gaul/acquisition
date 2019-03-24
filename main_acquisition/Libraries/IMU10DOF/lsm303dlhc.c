@@ -100,7 +100,6 @@ LSM303DLHC_result lsm303dlhc_read_magneticfield(LSM303DLHC_struct* data) {
 
 LSM303DLHC_result lsm303dlhc_read_temperature(LSM303DLHC_struct* data) {
     uint8_t value;
-    int8_t sign = 1;
 
     /* Read temperature */ // la temperature est sur 12 bits
     value = i2c_read(LSM_MAG_ADDRESS_R, LSM_TEMP_OUT_L_M);
