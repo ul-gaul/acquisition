@@ -134,8 +134,8 @@ int main(void) {
     //fonction qui met a jour les donner dans le gpsDataStruct
     updateGps(&gpsDataStruct);
     rd.timestamp = gpsDataStruct.UTCTime;
-		rd.latitude = gpsDataStruct.latitude;
-		rd.longitude = gpsDataStruct.longitude;
+	rd.latitude = gpsDataStruct.latitude;
+	rd.longitude = gpsDataStruct.longitude;
     // read IMU10DOF devices
     L3GD20_Read(&l3gd20_data);
 

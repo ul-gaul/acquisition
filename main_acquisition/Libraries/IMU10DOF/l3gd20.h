@@ -72,9 +72,9 @@
  * @brief  L3GD20 main working structure
  */
 typedef struct {
-	short X; /*!< X axis rotation */
-	short Y; /*!< Y axis rotation */
-	short Z; /*!< Z axis rotation */
+	int16_t X; /*!< X axis rotation */
+	int16_t Y; /*!< Y axis rotation */
+	int16_t Z; /*!< Z axis rotation */
 } L3GD20_struct;
 
 /**
