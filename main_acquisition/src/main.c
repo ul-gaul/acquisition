@@ -90,17 +90,17 @@ int main(void) {
 	//rd.temperature = 25.7;
 	rd.temperature = 0;
 	//rd.x_accel = 1.56;
-	rd.x_accel = 0;
+	rd.acc_x = 0;
 	//rd.y_accel = 2.45;
-	rd.y_accel = 0;
+	rd.acc_y = 0;
 	//rd.z_accel = 3.91;
-	rd.z_accel = 0;
-	//rd.x_magnet = 11.12;
-	rd.x_magnet = 0;
+	rd.acc_z = 0;
+	//rd.mag_x = 11.12;
+	rd.mag_x = 0;
 	//rd.y_magnet = 12.34;
-	rd.y_magnet = 0;
+	rd.mag_y = 0;
 	//rd.z_magnet = 13.56;
-	rd.z_magnet = 0;
+	rd.mag_z = 0;
 	//rd.x_gyro = 21.12;
 	rd.x_gyro = 0;
 	//rd.y_gyro = 22.34;
@@ -118,19 +118,19 @@ int main(void) {
 
 	while (1) {
 	    rfd900_write(rp_buffer, num_bytes);
-	    delay_ms(500);
-	    set_led_off(LED1);
-	    rfd900_write(rp_buffer, num_bytes);
-	    delay_ms(500);
-	    set_led_on(LED1);
+//	    delay_ms(500);
+//	    set_led_off(LED1);
+//	    rfd900_write(rp_buffer, num_bytes);
+//	    delay_ms(500);
+//	    set_led_on(LED1);
 	    //Cette partie transfer les donnee recus dans le buffer ou les donnees sont "stockees"
-            while (Read != Write) {                 /* Do it until buffer is empty */
-                USART1->DR = UART_Buffer[Read++];   /* Start byte transfer */
-                while (!(USART1->SR & USART_SR_TXE));   /* Wait till finished */
-                if (Read == UART_BUFFER_SIZE) {     /* Check buffer overflow */
-                    Read = 0;
-                }
-            }
+//            while (Read != Write) {                 /* Do it until buffer is empty */
+//                USART1->DR = UART_Buffer[Read++];   /* Start byte transfer */
+//                while (!(USART1->SR & USART_SR_TXE));   /* Wait till finished */
+//                if (Read == UART_BUFFER_SIZE) {     /* Check buffer overflow */
+//                    Read = 0;
+//                }
+//            }
     //fonction qui met a jour les donner dans le gpsDataStruct
     updateGps(&gpsDataStruct);
     rd.timestamp = gpsDataStruct.UTCTime;
