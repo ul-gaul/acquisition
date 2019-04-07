@@ -25,6 +25,12 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	offset += sizeof(pkt->data.latitude);
 	memcpy(dst + offset, (void *) &pkt->data.longitude, sizeof(pkt->data.longitude));
 	offset += sizeof(pkt->data.longitude);
+	memcpy(dst + offset, (void *) &pkt->data.NSIndicator, sizeof(pkt->data.NSIndicator));
+	offset += sizeof(pkt->data.NSIndicator);
+	memcpy(dst + offset, (void *) &pkt->data.EWIndicator, sizeof(pkt->data.EWIndicator));
+	offset += sizeof(pkt->data.EWIndicator);
+	memcpy(dst + offset, (void *) &pkt->data.UTCTime, sizeof(pkt->data.UTCTime));
+	offset += sizeof(pkt->data.UTCTime);
 	// 10DOF values
 	memcpy(dst + offset, (void *) &pkt->data.altitude, sizeof(pkt->data.altitude));
 	offset += sizeof(pkt->data.altitude);
@@ -36,6 +42,12 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	offset += sizeof(pkt->data.acc_y);
 	memcpy(dst + offset, (void *) &pkt->data.acc_z, sizeof(pkt->data.acc_z));
 	offset += sizeof(pkt->data.acc_z);
+	memcpy(dst + offset, (void *) &pkt->data.acc_x_uncomp, sizeof(pkt->data.acc_x_uncomp));
+	offset += sizeof(pkt->data.acc_x_uncomp);
+	memcpy(dst + offset, (void *) &pkt->data.acc_y_uncomp, sizeof(pkt->data.acc_y_uncomp));
+	offset += sizeof(pkt->data.acc_y_uncomp);
+	memcpy(dst + offset, (void *) &pkt->data.acc_z_uncomp, sizeof(pkt->data.acc_z_uncomp));
+	offset += sizeof(pkt->data.acc_z_uncomp);
 	memcpy(dst + offset, (void *) &pkt->data.mag_x, sizeof(pkt->data.mag_x));
 	offset += sizeof(pkt->data.mag_x);
 	memcpy(dst + offset, (void *) &pkt->data.mag_y, sizeof(pkt->data.mag_y));

@@ -59,19 +59,19 @@ int main(void) {
 	L3GD20_struct l3gd20_data;
 	LSM303DLHC_struct lsm303_data;
 
-//	init_leds();
+	init_leds();
 	init_TIM2();
-//	set_led_on(LED1);
-//	set_led_on(LED2);
-//	set_led_on(LED3);
-//	set_led_off(LED4);
-//	set_led_off(LED5);
-//	set_led_off(LED6);
-//	init_rfd900();
+	set_led_on(LED1);
+	set_led_on(LED2);
+	set_led_on(LED3);
+	set_led_off(LED4);
+	set_led_off(LED5);
+	set_led_off(LED6);
+	init_rfd900();
 	initGps();// activate USART1 on PA9 (TX) and PA10 (RX)
 
-//	imu10dof_init((struct BMP180_struct *) &bmp180_data, &delay_ms);
-//	bmp180_data.delay_func = &delay_ms;
+	imu10dof_init((struct BMP180_struct *) &bmp180_data, &delay_ms);
+	bmp180_data.delay_func = &delay_ms;
 
 
 	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
@@ -117,33 +117,47 @@ int main(void) {
 	num_bytes = serialize_rocket_packet(&rp, rp_buffer);
 
 	while (1) {
+	    rfd900_write(rp_buffer, num_bytes);
+	    delay_ms(500);
+	    set_led_off(LED1);
 //	    rfd900_write(rp_buffer, num_bytes);
-//	    delay_ms(500);
-//	    set_led_off(LED1);
-//	    rfd900_write(rp_buffer, num_bytes);
-//	    delay_ms(500);
-//	    set_led_on(LED1);
+	    delay_ms(500);
+	    set_led_on(LED1);
 		//fonction qui met a jour les donner dans le gpsDataStruct
 		updateGps(&gpsDataStruct);
-		rd.timestamp = gpsDataStruct.UTCTime;
+		rd.UTCTime = gpsDataStruct.UTCTime;
 		rd.latitude = gpsDataStruct.latitude;
 		rd.longitude = gpsDataStruct.longitude;
 		rd.EWIndicator = gpsDataStruct.EWIndicator;
 		rd.NSIndicator = gpsDataStruct.NSIndicator;
 		// read IMU10DOF devices
-//		L3GD20_Read(&l3gd20_data);
-//
-//		lsm303dlhc_read_acceleration(&lsm303_data);
-//		lsm303dlhc_read_magneticfield(&lsm303_data);
-//		lsm303dlhc_read_temperature(&lsm303_data);
-//
-//		bmp180_start_temperature(&bmp180_data);
-//		bmp180_read_temperature(&bmp180_data);
-//		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
-//		bmp180_read_pressure(&bmp180_data);
-//		// update rocket packet with imu10dof data
-//		rp.data.altitude = bmp180_data.altitude;
-//		rp.data.temperature = bmp180_data.temperature;
+		L3GD20_Read(&l3gd20_data);
+
+		lsm303dlhc_read_acceleration(&lsm303_data);
+		lsm303dlhc_read_magneticfield(&lsm303_data);
+		lsm303dlhc_read_temperature(&lsm303_data);
+
+		bmp180_start_temperature(&bmp180_data);
+		bmp180_read_temperature(&bmp180_data);
+		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
+		bmp180_read_pressure(&bmp180_data);
+		// update rocket packet with imu10dof data
+		rp.data.altitude = bmp180_data.altitude;
+		rp.data.temperature = bmp180_data.temperature;
+		rp.data.pressure = bmp180_data.pressure;
+
+		rp.data.acc_x = lsm303_data.acc_x;
+		rp.data.acc_y = lsm303_data.acc_y;
+		rp.data.acc_z = lsm303_data.acc_z;
+		rp.data.acc_x_uncomp = lsm303_data.acc_x_uncomp;
+		rp.data.acc_y_uncomp = lsm303_data.acc_y_uncomp;
+		rp.data.acc_z_uncomp = lsm303_data.acc_z_uncomp;
+		rp.data.mag_x = lsm303_data.mag_x;
+		rp.data.mag_y = lsm303_data.mag_y;
+		rp.data.mag_z = lsm303_data.mag_z;
+		rp.data.x_gyro = l3gd20_data.X;
+		rp.data.y_gyro = l3gd20_data.Y;
+		rp.data.z_gyro = l3gd20_data.Z;
     }
 }
 
