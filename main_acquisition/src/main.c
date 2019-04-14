@@ -114,15 +114,12 @@ int main(void) {
 
 	unsigned int num_bytes;
 	uint8_t rp_buffer[ROCKET_PACKET_SIZE];
-	num_bytes = serialize_rocket_packet(&rp, rp_buffer);
+	size_t rp_size;
+	rp_size = sizeof(rp.data);
+
 
 	while (1) {
-	    rfd900_write(rp_buffer, num_bytes);
-	    delay_ms(500);
-	    set_led_off(LED1);
-//	    rfd900_write(rp_buffer, num_bytes);
-	    delay_ms(500);
-	    set_led_on(LED1);
+
 		//fonction qui met a jour les donner dans le gpsDataStruct
 		updateGps(&gpsDataStruct);
 		rd.UTCTime = gpsDataStruct.UTCTime;
@@ -158,6 +155,13 @@ int main(void) {
 		rp.data.x_gyro = l3gd20_data.X;
 		rp.data.y_gyro = l3gd20_data.Y;
 		rp.data.z_gyro = l3gd20_data.Z;
+
+		/* serialize and send packet */
+		set_led_on(LED1);
+		memset(rp_buffer, 0, ROCKET_PACKET_SIZE);
+		num_bytes = serialize_rocket_packet(&rp, rp_buffer);
+		rfd900_write(rp_buffer, num_bytes);
+		set_led_off(LED1);
     }
 }
 

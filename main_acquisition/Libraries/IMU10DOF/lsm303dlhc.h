@@ -97,15 +97,15 @@
  * 	Contains XYZ accelerations and XYZ magnetic field measures
  */
 typedef struct {
-	uint16_t acc_x_uncomp;
-	uint16_t acc_y_uncomp;
-	uint16_t acc_z_uncomp;
+	int16_t acc_x_uncomp;
+	int16_t acc_y_uncomp;
+	int16_t acc_z_uncomp;
     float acc_x;
     float acc_y;
     float acc_z;
-    uint16_t mag_x;
-    uint16_t mag_y;
-    uint16_t mag_z;
+    int16_t mag_x;
+    int16_t mag_y;
+    int16_t mag_z;
     int16_t temperature;
 } LSM303DLHC_struct;
 

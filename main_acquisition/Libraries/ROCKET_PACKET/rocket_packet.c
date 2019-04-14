@@ -11,7 +11,7 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	/*
 	 * copy the rocket packet struct into the destination char array
 	 */
-	unsigned int offset = 0;
+	size_t offset = 0;
 	char start_char = ROCKET_PACKET_START;
 
 	// start char
@@ -36,6 +36,8 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 	offset += sizeof(pkt->data.altitude);
 	memcpy(dst + offset, (void *) &pkt->data.temperature, sizeof(pkt->data.temperature));
 	offset += sizeof(pkt->data.temperature);
+	memcpy(dst + offset, (void *) &pkt->data.pressure, sizeof(pkt->data.pressure));
+	offset += sizeof(pkt->data.pressure);
 	memcpy(dst + offset, (void *) &pkt->data.acc_x, sizeof(pkt->data.acc_x));
 	offset += sizeof(pkt->data.acc_x);
 	memcpy(dst + offset, (void *) &pkt->data.acc_y, sizeof(pkt->data.acc_y));
@@ -63,7 +65,7 @@ unsigned int serialize_rocket_packet(RocketPacket* pkt, uint8_t* dst) {
 
 	// compute checksum
 	pkt->checksum = 0;
-	for(int i = 1; i < offset; i++) {
+	for(size_t i = 1; i < offset; i++) {
 		pkt->checksum += dst[i];
 	}
 	pkt->checksum = ~pkt->checksum;

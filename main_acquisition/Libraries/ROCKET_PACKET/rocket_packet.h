@@ -34,16 +34,16 @@ typedef struct {
 	float temperature; // 60
 	// lsm303
 	// acceleration values are in milli-G
-	uint16_t acc_x_uncomp; // 62
-	uint16_t acc_y_uncomp; // 64
-	uint16_t acc_z_uncomp; // 66
+	int16_t acc_x_uncomp; // 62
+	int16_t acc_y_uncomp; // 64
+	int16_t acc_z_uncomp; // 66
 	float acc_x; // 70
 	float acc_y; // 74
 	float acc_z; // 78
 	// magnetic field values are in milli-gauss
-	uint16_t mag_x; // 80
-	uint16_t mag_y; // 82
-	uint16_t mag_z; // 84
+	int16_t mag_x; // 80
+	int16_t mag_y; // 82
+	int16_t mag_z; // 84
 	// l3dg20
 	// angular speed values are in degrees/s
 	int16_t x_gyro; // 86
