@@ -23,32 +23,32 @@ typedef struct {
 	// GPS values
 	double latitude; // 16
 	double longitude; // 24
-	char NSIndicator; // 32
-	char EWIndicator; // 40
-	double UTCTime; // 48
+	char NSIndicator; // 25
+	char EWIndicator; // 26
+	double UTCTime; // 34
 	// 10DOF values
 	// BMP180
 	
-	float altitude; // 52
-	uint32_t pressure; // 56
-	float temperature; // 60
+	float altitude; // 38
+	uint32_t pressure; // 42
+	float temperature; // 46
 	// lsm303
 	// acceleration values are in milli-G
-	int16_t acc_x_uncomp; // 62
-	int16_t acc_y_uncomp; // 64
-	int16_t acc_z_uncomp; // 66
-	float acc_x; // 70
-	float acc_y; // 74
-	float acc_z; // 78
+	int16_t acc_x_uncomp; // 48
+	int16_t acc_y_uncomp; // 50
+	int16_t acc_z_uncomp; // 52
+	float acc_x; // 56
+	float acc_y; // 60
+	float acc_z; // 64
 	// magnetic field values are in milli-gauss
-	int16_t mag_x; // 80
-	int16_t mag_y; // 82
-	int16_t mag_z; // 84
+	int16_t mag_x; // 66
+	int16_t mag_y; // 68
+	int16_t mag_z; // 70
 	// l3dg20
 	// angular speed values are in degrees/s
-	int16_t x_gyro; // 86
-	int16_t y_gyro; // 88
-	int16_t z_gyro; // 90
+	int16_t x_gyro; // 72
+	int16_t y_gyro; // 74
+	int16_t z_gyro; // 76
 
 } RocketData;
 
