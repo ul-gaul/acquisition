@@ -452,4 +452,5 @@ main_acquisition/Libraries/IMU10DOF/tm_stm32f4_bmp180/
 main_acquisition/Libraries/IMU10DOF/tm_stm32f4_l3gd20/
 main_acquisition/Libraries/IMU10DOF/tm_stm32f4_i2c/
 
-
+# file extensions
+*.zip
