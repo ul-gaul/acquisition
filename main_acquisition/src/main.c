@@ -291,3 +291,44 @@ uint16_t EVAL_AUDIO_GetSampleCallBack(void){
 	/* TODO, implement your code here */
 	return -1;
 }
+
+void init_TIM4() {
+	// init timer 82 Mhz / 30147 -> 100003.122 microsecond / tick
+	// period = 271 -> 1 interrupt / 100ms
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	TIM_TimeBaseInitTypeDef timerInit;
+	timerInit.TIM_Prescaler = 30147;
+	timerInit.TIM_CounterMode = TIM_CounterMode_Up;
+	timerInit.TIM_Period = 271;
+	timerInit.TIM_ClockDivision = TIM_CKD_DIV1;
+	timerInit.TIM_RepetitionCounter = 0;
+	TIM_TimeBaseInit(TIM4, &timerInit);
+	// enable timer
+	TIM_Cmd(TIM4, ENABLE);
+	// enable timer interrupts
+	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+
+	// init interrupts
+	NVIC_InitTypeDef nvic_struct;
+	nvic_struct.NVIC_IRQChannel = TIM4_IRQn;
+	nvic_struct.NVIC_IRQChannelPreemptionPriority = 2;
+	nvic_struct.NVIC_IRQChannelSubPriority = 2;
+	nvic_struct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&nvic_struct);
+}
+//trigger every 100 ms
+void TIM4_IRQHandler()
+{
+    // Checks whether the TIM4 interrupt has occurred or not
+    if (TIM_GetITStatus(TIM4, TIM_IT_Update))
+    {
+    	//**************INSERT YOUR CODE HERE*****************
+
+
+
+    	//****************************************************
+    	// Clears the TIM4 interrupt pending bit
+        TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+    }
+}
+
