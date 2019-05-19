@@ -9,6 +9,10 @@ toSend1 = "$GPGGA,111111.932,2447.0949,N,12100.5223,E,1,11,0.8,118.2,M,,,,0000*0
 toSend2 = "$GPGLL,2222.0944,N,12100.5213,E,222222.932,A,A*57\r\n"
 toSend3 = "hiugrthiugrt riwiw i01032498 hitler did something wrong gtogrtoijgroij  rjoigrt $GPRMC,444444.932,A,4242.0949,N,42424.5223,E,000.0,000.0,030407,,,A*61\r\n hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhhhhhhhhh"
 import serial
-
-with serial.Serial('COM3',115200) as ser:
-    ser.write(toSend3.encode())
+with open("fichier.txt",'a')as heyho:
+    with serial.Serial('COM3',9600) as ser:
+        #ser.write(toSend3.encode())
+        while True:
+            p = ser.readline().decode("unicode_escape")
+            print(p)
+            heyho.write(p)
