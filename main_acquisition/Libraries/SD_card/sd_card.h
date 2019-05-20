@@ -33,10 +33,16 @@
 					"\"y_gyro\","\
 					"\"z_gyro\"\n"\
 #define DATA_LINE "%s,%s,%s,%s,%s,%s,%s,%lu,%s,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d,%d,%d\n"
+#define RD_BUFFER_SIZE 128
 
+typedef struct {
+	size_t r;
+	size_t w;
+	RocketData rd[RD_BUFFER_SIZE];
+} RocketDataCircBuf;
 
 /* mount the sd card and create a file for writing */
 int sd_card_init();
 
-/* write all available rocket packets to the file */
-void sd_card_write_rocket_packets();
+/* write all available rocket data structs to the file */
+void sd_card_write_rocket_data(RocketDataCircBuf* rd);

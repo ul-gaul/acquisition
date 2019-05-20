@@ -16,7 +16,7 @@ int sd_card_init() {
 	/* mount FAT filesystem */
 	ret = f_mount(&fat_fs, "", 1);
 	if (ret != FR_OK) {
-		return ret;
+		goto close;
 	}
 
 	/* determine filename from existing files */
@@ -42,6 +42,23 @@ close:
 	return ret;
 }
 
-void sd_card_write_rocket_packets() {
+void sd_card_write_rocket_packets(RocketDataCircBuf* rd) {
+	int err;
 
+	/* mount sd card and open file where we left off */
+	// TODO open file and append to it to not overwrite 
+	// previous contents
+	err = f_mount(&fat_fs, "", 1);
+	if (err != FR_OK) {
+		goto close;
+	}
+
+	/* create file and write header */
+	err = f_open(&fd, filename, FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+	if (err != FR_OK) {
+		goto close;
+	}
+close:
+	f_close(&fd);
+	f_mount(0, "", 1);
 }
