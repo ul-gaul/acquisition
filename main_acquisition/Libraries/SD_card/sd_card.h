@@ -9,6 +9,7 @@
 #include "tm_stm32f4_delay.h"
 #include "tm_stm32f4_disco.h"
 #include "tm_stm32f4_fatfs.h"
+#include "rocket_packet.h"
 
 
 #define DATA_HEADER "\"timestamp\","\
@@ -31,7 +32,7 @@
 					"\"mag_z\","\
 					"\"x_gyro\","\
 					"\"y_gyro\","\
-					"\"z_gyro\"\n"\
+					"\"z_gyro\"\n"
 #define DATA_LINE "%s,%s,%s,%s,%s,%s,%s,%lu,%s,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d,%d,%d\n"
 #define RD_BUFFER_SIZE 128
 

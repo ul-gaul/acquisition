@@ -27,7 +27,7 @@ int sd_card_init() {
 	if (ret != FR_OK) {
 		goto close;
 	}
-	ret = f_puts("2019\n");
+	ret = f_puts("2019\n", &fd);
 	if (ret < 0) {
 		goto close;
 	}
