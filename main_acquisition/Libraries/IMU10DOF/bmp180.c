@@ -17,7 +17,7 @@
 #define BMP180_1_8192   ((float) 0.0001220703125)
 #define BMP180_1_32768  ((float) 0.000030517578125)
 #define BMP180_1_65536  ((float) 0.0000152587890625)
-#define BMP180_1_P_SEA ((float) 0.00001) // BMP180_1_P_SEA is equal to 1 over pressure at sea level
+#define BMP180_1_P_SEA ((float) 0.00000993048) // BMP180_1_P_SEA is equal to 1 over pressure at sea level
 
 /* EEPROM values */
 static int16_t AC1, AC2, AC3, B1, B2, MB, MC, MD;
