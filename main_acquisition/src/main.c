@@ -116,17 +116,21 @@ int main(void) {
 	uint8_t rp_buffer[ROCKET_PACKET_SIZE];
 	size_t rp_size;
 	rp_size = sizeof(rp.data);
-
+	double tstamp = 0;
 
 	while (1) {
 
+		// update timestamp
+		rp.data.timestamp = tstamp;
+		tstamp += 1;
+
 		//fonction qui met a jour les donner dans le gpsDataStruct
 		updateGps(&gpsDataStruct);
-		rd.UTCTime = gpsDataStruct.UTCTime;
-		rd.latitude = gpsDataStruct.latitude;
-		rd.longitude = gpsDataStruct.longitude;
-		rd.EWIndicator = gpsDataStruct.EWIndicator;
-		rd.NSIndicator = gpsDataStruct.NSIndicator;
+		rp.data.UTCTime = gpsDataStruct.UTCTime;
+		rp.data.latitude = gpsDataStruct.latitude;
+		rp.data.longitude = gpsDataStruct.longitude;
+		rp.data.EWIndicator = gpsDataStruct.EWIndicator;
+		rp.data.NSIndicator = gpsDataStruct.NSIndicator;
 		// read IMU10DOF devices
 		L3GD20_Read(&l3gd20_data);
 
