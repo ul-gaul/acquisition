@@ -45,5 +45,8 @@ typedef struct {
 /* mount the sd card and create a file for writing */
 int sd_card_init();
 
+/* copy rocket data to buffer */
+int sd_card_add_rd(RocketData rd);
+
 /* write all available rocket data structs to the file */
-void sd_card_write_rocket_data(RocketDataCircBuf* rd);
+int sd_card_write_rocket_data(RocketDataCircBuf* rd, int is_open);
