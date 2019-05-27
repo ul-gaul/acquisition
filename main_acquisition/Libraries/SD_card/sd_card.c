@@ -47,6 +47,8 @@ void sd_card_write_rocket_packets(RocketDataCircBuf* rd) {
 
 	/* mount sd card and open file where we left off */
 	// TODO open file and append to it to not overwrite 
+	// TODO use f_sync(&fd); to sync cached changed to disk
+	// TODO use this http://elm-chan.org/fsw/ff/res/app1.c to append to file
 	// previous contents
 	err = f_mount(&fat_fs, "", 1);
 	if (err != FR_OK) {
