@@ -36,7 +36,6 @@ void TIM2_IRQHandler();
 void TIM2_ms_delay_decrement(void);
 void delay_ms(__IO uint32_t delay);
 void USART3_IRQHANDLER();
-void float_to_string(float a, char* buf, uint8_t res);
 
 /**
 **===========================================================================
@@ -257,14 +256,6 @@ void delay_ms(__IO uint32_t delay) {
 	while(TIM2_ms_counter) {
 
 	}
-}
-
-void float_to_string(float a, char* buf, uint8_t res) {
-	int int_part;
-	int dec_part;
-	int_part = (int) a;
-	dec_part = (int) ((a - int_part) * pow(10, res));
-	sprintf(buf, "%d.%d", int_part, dec_part);
 }
 
 void USART3_IRQHANDLER() {

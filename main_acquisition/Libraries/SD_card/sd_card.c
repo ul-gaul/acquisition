@@ -8,7 +8,6 @@ uint32_t sd_total_space;
 uint32_t sd_free_space;
 char filename[256] = "data.csv";
 
-void float_to_string(float a, char* buf, uint8_t res);
 int w_rd_line(FIL* fd, RocketData rd);
 
 int sd_card_init() {
@@ -73,6 +72,7 @@ int sd_card_add_rd(RocketDataCircBuf* rdb, RocketData* rd) {
 
 int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
 	int err;
+	int res;
 
 	/* mount sd card and open file where we left off */
 	// TODO use f_sync(&fd); to sync cached changed to disk
@@ -84,20 +84,20 @@ int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
 		}
 
 		/* create file and write header */
-		err = f_open(&fd, filename, FA_OPEN_APPEND | FA_READ | FA_WRITE);
+		err = f_open(&fd, filename, FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 		if (err != FR_OK) {
 			goto close;
 		}
 	}
 
 	for (;;) {
-		rdb.r++;
-		if (rdb.r >= RD_BUFFER_SIZE)
-			rdb.r = 0;
-		if (rdb.r == rdb.w)
+		rdb->r++;
+		if (rdb->r >= RD_BUFFER_SIZE)
+			rdb->r = 0;
+		if (rdb->r == rdb->w)
 			break;
-		res = w_rd_line(&fd, rdb.rd[rdb.r]);
-		if (ret <= 0) {
+		res = w_rd_line(&fd, rdb->rd[rdb->r]);
+		if (res <= 0) {
 			goto close;
 		}
 	}

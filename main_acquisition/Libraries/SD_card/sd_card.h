@@ -10,6 +10,7 @@
 #include "tm_stm32f4_disco.h"
 #include "tm_stm32f4_fatfs.h"
 #include "rocket_packet.h"
+#include "math.h"
 
 
 #define DATA_HEADER "\"timestamp\","\
@@ -42,11 +43,14 @@ typedef struct {
 	RocketData rd[RD_BUFFER_SIZE];
 } RocketDataCircBuf;
 
+/* write a float as a string to a buffer */
+void float_to_string(float a, char* buf, uint8_t res);
+
 /* mount the sd card and create a file for writing */
 int sd_card_init();
 
 /* copy rocket data to buffer */
-int sd_card_add_rd(RocketData rd);
+int sd_card_add_rd(RocketDataCircBuf* rdb, RocketData* rd);
 
 /* write all available rocket data structs to the file */
 int sd_card_write_rocket_data(RocketDataCircBuf* rd, int is_open);
