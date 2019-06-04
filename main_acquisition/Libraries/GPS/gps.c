@@ -163,7 +163,7 @@ void updateGps(gpsData *gpsStruct)
 		}
 		gpsStruct->UTCTime = (double)atof((char *)subsetCharArray);
 	}
-	else if(gpsDataString[4] == 'M') // check if data is GPGMR
+	else if(gpsDataString[4] == 'M') // check if data is GPRMC
 	{
 		getIn = 1;
 		unsigned char i = 0;

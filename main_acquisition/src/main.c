@@ -120,9 +120,14 @@ int main(void) {
 	uint8_t rp_buffer[ROCKET_PACKET_SIZE];
 
 	sd_card_init();
+	double tstamp = 0;
 
 	/* Infinite loop */
 	for (;;) {
+
+		// update timestamp
+		rp.data.timestamp = tstamp;
+		tstamp += 1;
 
 		//fonction qui met a jour les donner dans le gpsDataStruct
 		set_led_on(LED1);
