@@ -6,9 +6,23 @@ FATFS fat_fs;
 FIL fd;
 uint32_t sd_total_space;
 uint32_t sd_free_space;
-char filename[256] = "data.csv";
 
 int w_rd_line(FIL* fd, RocketData rd);
+
+FRESULT open_append(FIL* fp, const char* path) {
+    FRESULT fr;
+
+    /* Opens an existing file. If not exist, creates a new file. */
+    fr = f_open(fp, path, FA_WRITE | FA_OPEN_ALWAYS);
+    if (fr == FR_OK) {
+        /* Seek to end of the file to append data */
+        fr = f_lseek(fp, f_size(fp));
+        if (fr != FR_OK)
+            f_close(fp);
+    }
+    return fr;
+}
+
 
 int sd_card_init() {
 	int ret;
@@ -24,7 +38,7 @@ int sd_card_init() {
 	// TODO
 
 	/* create file and write header */
-	ret = f_open(&fd, filename, FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+	ret = open_append(&fd, FILENAME);
 	if (ret != FR_OK) {
 		goto close;
 	}
@@ -68,6 +82,8 @@ int sd_card_add_rd(RocketDataCircBuf* rdb, RocketData* rd) {
 	rdb->rd[rdb->w].z_gyro = rd->z_gyro;
 
 	rdb->w++;
+
+	return 0;
 }
 
 int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
@@ -84,7 +100,7 @@ int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
 		}
 
 		/* create file and write header */
-		err = f_open(&fd, filename, FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+		err = open_append(&fd, FILENAME);
 		if (err != FR_OK) {
 			goto close;
 		}
@@ -111,7 +127,28 @@ int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
 close:
 	f_close(&fd);
 	f_mount(0, "", 1);
-	return 0;
+	return err;
+}
+
+int sd_card_write_rocket_data(RocketData* rd) {
+	int err;
+
+	err = f_mount(&fat_fs, "", 1);
+	if (err != FR_OK) {
+		goto close;
+	}
+
+	err = open_append(&fd, FILENAME);
+	if (err != FR_OK) {
+		goto close;
+	}
+
+	err = w_rd_line(&fd, *rd);
+
+close:
+	f_close(&fd);
+	f_mount(0, "", 1);
+	return err;
 }
 
 int w_rd_line(FIL* fd, RocketData rd) {
@@ -119,9 +156,9 @@ int w_rd_line(FIL* fd, RocketData rd) {
 
 	float_to_string(rd.timestamp, fstr, 4);
 	f_printf(fd, "%s,", fstr);
-	float_to_string(rd.latitude, fstr, 4);
+	float_to_string(rd.latitude, fstr, 6);
 	f_printf(fd, "%s,", fstr);
-	float_to_string(rd.longitude, fstr, 4);
+	float_to_string(rd.longitude, fstr, 6);
 	f_printf(fd, "%s,", fstr);
 	f_printf(fd, "%s,", rd.NSIndicator);
 	f_printf(fd, "%s,", rd.EWIndicator);

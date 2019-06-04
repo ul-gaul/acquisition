@@ -12,7 +12,7 @@
 #include "rocket_packet.h"
 #include "math.h"
 
-
+#define FILENAME "test_write_rocket_packet2.csv"
 #define DATA_HEADER "\"timestamp\","\
 					"\"latitude\","\
 					"\"longitude\","\
@@ -43,6 +43,9 @@ typedef struct {
 	RocketData rd[RD_BUFFER_SIZE];
 } RocketDataCircBuf;
 
+/* open and set the file pointer to the end of the file */
+FRESULT open_append(FIL* fp, const char* path);
+
 /* write a float as a string to a buffer */
 void float_to_string(float a, char* buf, uint8_t res);
 
@@ -53,4 +56,7 @@ int sd_card_init();
 int sd_card_add_rd(RocketDataCircBuf* rdb, RocketData* rd);
 
 /* write all available rocket data structs to the file */
-int sd_card_write_rocket_data(RocketDataCircBuf* rd, int is_open);
+//int sd_card_write_rocket_data(RocketDataCircBuf* rd, int is_open);
+
+/* write a rocket data to the sd card */
+int sd_card_write_rocket_data(RocketData* rd);
