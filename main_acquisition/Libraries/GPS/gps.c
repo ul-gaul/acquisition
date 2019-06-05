@@ -39,7 +39,7 @@ void initGps(void)
 
     /* Configure UART setup */
     USART_StructInit(&USART_InitStruct);
-    USART_InitStruct.USART_BaudRate = 115200;
+    USART_InitStruct.USART_BaudRate = GPS_BAUDRATE;
     USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStruct.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
     USART_InitStruct.USART_Parity = USART_Parity_No;

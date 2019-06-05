@@ -117,11 +117,11 @@ int main(void) {
 			rp.data.longitude = 0;
 		}
 		rp.data.EWIndicator = gpsDataStruct.EWIndicator;
-		if (rp.data.EWIndicator != 'E' || rp.data.EWIndicator != 'W') {
+		if (rp.data.EWIndicator != 'E' && rp.data.EWIndicator != 'W') {
 			rp.data.EWIndicator = 'F';
 		}
 		rp.data.NSIndicator = gpsDataStruct.NSIndicator;
-		if (rp.data.NSIndicator != 'N' || rp.data.NSIndicator != 'S') {
+		if (rp.data.NSIndicator != 'N' && rp.data.NSIndicator != 'S') {
 			rp.data.NSIndicator = 'M';
 		}
 
