@@ -81,36 +81,8 @@ int main(void) {
 
 	gpsData gpsDataStruct; //struct used to store GPS data, need to malloc
 
-	uint8_t ledstate;
 	// writing test rocket data and packet
 	RocketData rd;
-	rd.timestamp = 0;
-	//rd.latitude = 46.779013;
-	rd.latitude = 0;
-	//rd.longitude = -71.276001;
-	rd.longitude = 0;
-	//rd.altitude = 10000.1;
-	rd.altitude = 0;
-	//rd.temperature = 25.7;
-	rd.temperature = 0;
-	//rd.x_accel = 1.56;
-	rd.acc_x = 0;
-	//rd.y_accel = 2.45;
-	rd.acc_y = 0;
-	//rd.z_accel = 3.91;
-	rd.acc_z = 0;
-	//rd.mag_x = 11.12;
-	rd.mag_x = 0;
-	//rd.y_magnet = 12.34;
-	rd.mag_y = 0;
-	//rd.z_magnet = 13.56;
-	rd.mag_z = 0;
-	//rd.x_gyro = 21.12;
-	rd.x_gyro = 0;
-	//rd.y_gyro = 22.34;
-	rd.y_gyro = 0;
-	//rd.z_gyro = 23.56;
-	rd.z_gyro = 0;
 	RocketPacket rp;
 	rp.start_char = ROCKET_PACKET_START;
 	rp.data = rd;
@@ -129,14 +101,30 @@ int main(void) {
 		rp.data.timestamp = tstamp;
 		tstamp += 1;
 
-		//fonction qui met a jour les donner dans le gpsDataStruct
 		set_led_on(LED1);
+		// update les données du gps data struct
 		updateGps(&gpsDataStruct);
 		rp.data.UTCTime = gpsDataStruct.UTCTime;
+		if (rp.data.UTCTime < 0 || rp.data.UTCTime > 2.0e+200) {
+			rp.data.UTCTime = 0;
+		}
 		rp.data.latitude = gpsDataStruct.latitude;
+		if (rp.data.latitude < 1) {
+			rp.data.latitude = 0;
+		}
 		rp.data.longitude = gpsDataStruct.longitude;
+		if (rp.data.longitude < 1) {
+			rp.data.longitude = 0;
+		}
 		rp.data.EWIndicator = gpsDataStruct.EWIndicator;
+		if (rp.data.EWIndicator != 'E' || rp.data.EWIndicator != 'W') {
+			rp.data.EWIndicator = 'F';
+		}
 		rp.data.NSIndicator = gpsDataStruct.NSIndicator;
+		if (rp.data.NSIndicator != 'N' || rp.data.NSIndicator != 'S') {
+			rp.data.NSIndicator = 'M';
+		}
+
 		set_led_off(LED1);
 
 		// read IMU10DOF devices

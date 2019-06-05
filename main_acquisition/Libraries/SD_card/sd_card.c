@@ -154,32 +154,57 @@ close:
 int w_rd_line(FIL* fd, RocketData rd) {
 	char fstr[16];
 
+	memset(fstr, 0, 16);
 	float_to_string(rd.timestamp, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.latitude, fstr, 6);
 	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.longitude, fstr, 6);
 	f_printf(fd, "%s,", fstr);
-	f_printf(fd, "%s,", rd.NSIndicator);
-	f_printf(fd, "%s,", rd.EWIndicator);
+
+	f_printf(fd, "%c,", rd.NSIndicator);
+	f_printf(fd, "%c,", rd.EWIndicator);
+
+	memset(fstr, 0, 16);
+	float_to_string(rd.UTCTime, fstr, 6);
+	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.altitude, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.pressure, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.temperature, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
 	f_printf(fd, "%d,", rd.acc_x_uncomp);
 	f_printf(fd, "%d,", rd.acc_y_uncomp);
 	f_printf(fd, "%d,", rd.acc_z_uncomp);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.acc_x, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.acc_y, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
+	memset(fstr, 0, 16);
 	float_to_string(rd.acc_z, fstr, 4);
 	f_printf(fd, "%s,", fstr);
+
 	f_printf(fd, "%d,", rd.mag_x);
 	f_printf(fd, "%d,", rd.mag_y);
 	f_printf(fd, "%d,", rd.mag_z);
+
 	f_printf(fd, "%d,", rd.x_gyro);
 	f_printf(fd, "%d,", rd.y_gyro);
 	f_printf(fd, "%d\n", rd.z_gyro);
@@ -191,6 +216,6 @@ void float_to_string(float a, char* buf, uint8_t res) {
 	int int_part;
 	int dec_part;
 	int_part = (int) a;
-	dec_part = (int) ((a - int_part) * pow(10, res));
+	dec_part = abs((int) ((a - int_part) * pow(10, res)));
 	sprintf(buf, "%d.%d", int_part, dec_part);
 }

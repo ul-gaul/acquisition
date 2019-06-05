@@ -12,7 +12,7 @@
 #include "rocket_packet.h"
 #include "math.h"
 
-#define FILENAME "test_write_rocket_packet2.csv"
+#define FILENAME "test_gps.csv"
 #define DATA_HEADER "\"timestamp\","\
 					"\"latitude\","\
 					"\"longitude\","\
