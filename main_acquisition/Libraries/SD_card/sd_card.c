@@ -6,6 +6,7 @@ FATFS fat_fs;
 FIL fd;
 uint32_t sd_total_space;
 uint32_t sd_free_space;
+int sd_card_is_open;
 
 int w_rd_line(FIL* fd, RocketData rd);
 
@@ -51,7 +52,12 @@ int sd_card_init() {
 		goto close;
 	}
 
+	// success
+	sd_card_is_open = 1;
+	return 0;
+
 close:
+	sd_card_is_open = 0;
 	f_close(&fd);
 	f_mount(0, "", 1);
 	return ret;
@@ -86,14 +92,14 @@ int sd_card_add_rd(RocketDataCircBuf* rdb, RocketData* rd) {
 	return 0;
 }
 
-int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
+int sd_card_write_rocket_packets(RocketDataCircBuf* rdb) {
 	int err;
 	int res;
 
 	/* mount sd card and open file where we left off */
 	// TODO use f_sync(&fd); to sync cached changed to disk
 
-	if (is_open == 0) {
+	if (sd_card_is_open != 1) {
 		err = f_mount(&fat_fs, "", 1);
 		if (err != FR_OK) {
 			goto close;
@@ -125,6 +131,7 @@ int sd_card_write_rocket_packets(RocketDataCircBuf* rdb, int is_open) {
 	return 1;
 
 close:
+	sd_card_is_open = 0;
 	f_close(&fd);
 	f_mount(0, "", 1);
 	return err;
@@ -133,19 +140,30 @@ close:
 int sd_card_write_rocket_data(RocketData* rd) {
 	int err;
 
-	err = f_mount(&fat_fs, "", 1);
-	if (err != FR_OK) {
-		goto close;
-	}
+	if (sd_card_is_open != 1) {
+		err = f_mount(&fat_fs, "", 1);
+		if (err != FR_OK) {
+			goto close;
+		}
 
-	err = open_append(&fd, FILENAME);
-	if (err != FR_OK) {
-		goto close;
+		err = open_append(&fd, FILENAME);
+		if (err != FR_OK) {
+			goto close;
+		}
 	}
 
 	err = w_rd_line(&fd, *rd);
+	if (err != 0) {
+		goto close;
+	}
+	// write cached changes to disk to that
+	// they are saved in case of a crash
+	f_sync(&fd);
+
+	return 0;
 
 close:
+	sd_card_is_open = 0;
 	f_close(&fd);
 	f_mount(0, "", 1);
 	return err;
