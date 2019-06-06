@@ -150,6 +150,7 @@ int sd_card_write_rocket_data(RocketData* rd) {
 		if (err != FR_OK) {
 			goto close;
 		}
+		sd_card_is_open = 1;
 	}
 
 	err = w_rd_line(&fd, *rd);
