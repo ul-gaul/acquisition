@@ -25,7 +25,7 @@
 #define RFD_USART_PERIPH_TYPEDEFgps USART1
 #define RFD_TXgps GPIO_Pin_9
 #define RFD_RXgps GPIO_Pin_10
-#define RFD_BAUDRATEgps 115200
+#define GPS_BAUDRATE 9600
 
 /* Receive buffer for DMA */
 #define DMA_RX_BUFFER_SIZE          128

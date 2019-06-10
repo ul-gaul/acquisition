@@ -41,7 +41,7 @@ void init_rfd900() {
 	// setup interrupts
 	USART_ITConfig(RFD_USART_PERIPH_TYPEDEF, USART_IT_RXNE, ENABLE);
 
-#if RX_ENABLE
+#if RFD_RX_ENABLE
 	// initialize NVIC for RX interrupts
 	NVIC_InitTypeDef NVIC_InitStruct;
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
