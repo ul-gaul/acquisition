@@ -7,6 +7,8 @@ FIL fd;
 uint32_t sd_total_space;
 uint32_t sd_free_space;
 int sd_card_is_open;
+DIR cwd;
+FILINFO cfi;
 
 int w_rd_line(FIL* fd, RocketData rd);
 
@@ -27,6 +29,8 @@ FRESULT open_append(FIL* fp, const char* path) {
 
 int sd_card_init() {
 	int ret;
+	char filename[32];
+	int fcount = 0;
 	
 
 	/* mount FAT filesystem */
@@ -36,10 +40,25 @@ int sd_card_init() {
 	}
 
 	/* determine filename from existing files */
-	// TODO
+	f_opendir(&cwd, "/");
+	for (;;) {
+		ret = f_readdir(&cwd, &cfi);
+		if (ret != FR_OK || cfi.fname[0] == 0) {
+			// break on error or end of dir
+			break;
+		}
+		if (!(cfi.fattrib & AM_DIR)) {
+			// current file info is a file (not directory)
+			fcount++;
+		}
+	}
+	f_closedir(&cwd);
+	// create filename
+	memset(filename, 0, 32);
+	sprintf(filename, FILENAME, fcount);
 
 	/* create file and write header */
-	ret = open_append(&fd, FILENAME);
+	ret = f_open(&fd, filename, FA_WRITE | FA_OPEN_ALWAYS);
 	if (ret != FR_OK) {
 		goto close;
 	}
