@@ -72,8 +72,10 @@ BMP180_Results bmp180_start_temperature(BMP180_struct* data) {
 	i2c_write(BMP180_I2C_ADDRW, BMP180_REGISTER_CONTROL,
 		BMP180_COMMAND_TEMPERATURE);
 	// set minimum delay
+#if BMP180_START_DELAY
 	data->delay = BMP180_TEMPERATURE_DELAY;
 	data->delay_func(data->delay);
+#endif
 	return BMP180_Res_OK;
 }
 
@@ -123,7 +125,9 @@ BMP180_Results bmp180_start_pressure(BMP180_struct* data, BMP180_Sampling sampli
 	// write to device
 	i2c_write(BMP180_I2C_ADDRW, BMP180_REGISTER_CONTROL, command);
 	// wait for device
+#if BMP180_START_DELAY
 	data->delay_func(data->delay);
+#endif
 	// save selected sampling
 	data->sampling = sampling;
 	return BMP180_Res_OK;
