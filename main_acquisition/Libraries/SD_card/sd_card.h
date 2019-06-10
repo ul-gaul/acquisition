@@ -52,11 +52,5 @@ void float_to_string(float a, char* buf, uint8_t res);
 /* mount the sd card and create a file for writing */
 int sd_card_init();
 
-/* copy rocket data to buffer */
-int sd_card_add_rd(RocketDataCircBuf* rdb, RocketData* rd);
-
-/* write all available rocket data structs to the file */
-//int sd_card_write_rocket_data(RocketDataCircBuf* rd, int is_open);
-
 /* write a rocket data to the sd card */
 int sd_card_write_rocket_data(RocketData* rd);
