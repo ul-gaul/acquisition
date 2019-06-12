@@ -1,0 +1,69 @@
+Configuration	gaul_acquisition
+STM32CubeMX 	4.27.0
+Date	11/04/2018
+MCU	STM32F407VGTx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+I2C1	I2C	I2C1_SCL	PB8
+I2C1	I2C	I2C1_SDA	PB9
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SPI1	Hardware NSS Output Signal	SPI1_NSS	PA4
+SYS	TIM1	SYS_VS_tim1	VP_SYS_VS_tim1
+TIM2	Internal Clock	TIM2_VS_ClockSourceINT	VP_TIM2_VS_ClockSourceINT
+USART1	Asynchronous	USART1_RX	PA10
+USART1	Asynchronous	USART1_TX	PA9
+USART3	Asynchronous	USART3_RX	PD9
+USART3	Asynchronous	USART3_TX	PD8
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+29	PA4	SPI1_NSS	
+30	PA5	SPI1_SCK	
+31	PA6	SPI1_MISO	
+32	PA7	SPI1_MOSI	
+40	PE9	GPIO_Output	VALVE_ENABLE
+41	PE10	GPIO_Output	LED1
+42	PE11	GPIO_Output	LED2
+43	PE12	GPIO_Output	LED3
+44	PE13	GPIO_Output	LED4
+45	PE14	GPIO_Output	LED5
+46	PE15	GPIO_Output	LED6
+55	PD8	USART3_TX	UART_RF_TX
+56	PD9	USART3_RX	UART_RF_RX
+68	PA9	USART1_TX	UART_GPS_TX
+69	PA10	USART1_RX	UART_GPS_RX
+95	PB8	I2C1_SCL	
+96	PB9	I2C1_SDA	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : gaul_acquisition
+Project Folder : /home/laplace/gaul/acquisition/doc
+Toolchain / IDE : TrueSTUDIO
+Firmware Package Name and Version : STM32Cube FW_F4 V1.21.0
+
+
+Code Generation Settings : 
+STM32Cube Firmware Library Package : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : Balanced Size/Speed
+
+
+
+
+
+

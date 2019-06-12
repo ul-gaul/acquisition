@@ -1,0 +1,5 @@
+prescaler = int(input("\nInsert prescaler : \n"))
+period = int(input("\nInsert period : \n"))
+result = 82*10**6 / ((prescaler+1) * (period + 1))
+print("\n\n" + str(result) + " Hz")
+print("\n" + str(1/result) + " sec")
