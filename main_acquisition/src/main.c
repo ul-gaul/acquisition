@@ -227,12 +227,14 @@ void delay_ms(__IO uint32_t delay) {
 	}
 }
 
+/*
 void USART3_IRQHANDLER() {
 //	char byte_rx;
 //	if(USART_GetITStatus(RFD_USART_PERIPH_TYPEDEF, USART_IT_RXNE)) {
 //		byte_rx = USART_ReceiveData(RFD_USART_PERIPH_TYPEDEF);
 //	}
 }
+*/
 
 /*
  * Callback used by stm32f4_discovery_audio_codec.c.RCC_APB1RCC_AHB1PeriphClockCmd
@@ -252,6 +254,7 @@ uint16_t EVAL_AUDIO_GetSampleCallBack(void){
 	return -1;
 }
 
+/*
 void init_TIM4() {
 	// init timer 82 Mhz / 30147 -> 100003.122 microsecond / tick
 	// period = 271 -> 1 interrupt / 100ms
@@ -282,13 +285,11 @@ void TIM4_IRQHandler()
     // Checks whether the TIM4 interrupt has occurred or not
     if (TIM_GetITStatus(TIM4, TIM_IT_Update))
     {
-    	//**************INSERT YOUR CODE HERE*****************
+    	// 			INSERT YOUR CODE HERE
 
-
-
-    	//****************************************************
     	// Clears the TIM4 interrupt pending bit
         TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
     }
 }
+*/
 
