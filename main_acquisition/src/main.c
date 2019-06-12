@@ -94,6 +94,10 @@ int main(void) {
 	sd_card_init();
 	double tstamp = 0;
 
+	// start temperature/pressure acquisition now so first data is valid
+	bmp180_start_temperature(&bmp180_data);
+	bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
+
 	/* Infinite loop */
 	for (;;) {
 
