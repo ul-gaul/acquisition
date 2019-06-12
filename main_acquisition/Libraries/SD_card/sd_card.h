@@ -13,6 +13,7 @@
 #include "math.h"
 
 #define FILENAME "data_%d.csv"
+#define FILENAME_SIZE 32
 #define DATA_HEADER "\"timestamp\","\
 					"\"latitude\","\
 					"\"longitude\","\
@@ -36,6 +37,7 @@
 					"\"z_gyro\"\n"
 #define DATA_LINE "%s,%s,%s,%s,%s,%s,%s,%lu,%s,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d,%d,%d\n"
 #define RD_BUFFER_SIZE 128
+
 
 typedef struct {
 	size_t r;

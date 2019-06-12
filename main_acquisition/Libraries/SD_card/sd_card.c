@@ -9,6 +9,7 @@ uint32_t sd_free_space;
 int sd_card_is_open;
 DIR cwd;
 FILINFO cfi;
+char filename[FILENAME_SIZE];
 
 int w_rd_line(FIL* fd, RocketData rd);
 
@@ -26,18 +27,9 @@ FRESULT open_append(FIL* fp, const char* path) {
     return fr;
 }
 
-
-int sd_card_init() {
-	int ret;
-	char filename[32];
+void get_filename(char* fname) {
 	int fcount = 0;
-	
-
-	/* mount FAT filesystem */
-	ret = f_mount(&fat_fs, "", 1);
-	if (ret != FR_OK) {
-		goto close;
-	}
+	int ret;
 
 	/* determine filename from existing files */
 	f_opendir(&cwd, "/");
@@ -54,8 +46,20 @@ int sd_card_init() {
 	}
 	f_closedir(&cwd);
 	// create filename
-	memset(filename, 0, 32);
-	sprintf(filename, FILENAME, fcount);
+	memset(fname, 0, FILENAME_SIZE);
+	sprintf(fname, FILENAME, fcount);
+}
+
+int sd_card_init() {
+	int ret;
+
+	/* mount FAT filesystem */
+	ret = f_mount(&fat_fs, "", 1);
+	if (ret != FR_OK) {
+		goto close;
+	}
+
+	get_filename(filename);
 
 	/* create file and write header */
 	ret = f_open(&fd, filename, FA_WRITE | FA_OPEN_ALWAYS);
@@ -82,7 +86,6 @@ close:
 	return ret;
 }
 
-
 int sd_card_write_rocket_data(RocketData* rd) {
 	int err;
 
@@ -92,7 +95,9 @@ int sd_card_write_rocket_data(RocketData* rd) {
 			goto close;
 		}
 
-		err = open_append(&fd, FILENAME);
+		get_filename(filename);
+
+		err = open_append(&fd, filename);
 		if (err != FR_OK) {
 			goto close;
 		}
@@ -131,8 +136,7 @@ int w_rd_line(FIL* fd, RocketData rd) {
 	float_to_string(rd.longitude, fstr, 6);
 	f_printf(fd, "%s,", fstr);
 
-	f_printf(fd, "%c,", rd.NSIndicator);
-	f_printf(fd, "%c,", rd.EWIndicator);
+	f_printf(fd, "%c,%c,", rd.NSIndicator, rd.EWIndicator);
 
 	memset(fstr, 0, 16);
 	float_to_string(rd.UTCTime, fstr, 6);
@@ -150,9 +154,8 @@ int w_rd_line(FIL* fd, RocketData rd) {
 	float_to_string(rd.temperature, fstr, 4);
 	f_printf(fd, "%s,", fstr);
 
-	f_printf(fd, "%d,", rd.acc_x_uncomp);
-	f_printf(fd, "%d,", rd.acc_y_uncomp);
-	f_printf(fd, "%d,", rd.acc_z_uncomp);
+	f_printf(fd, "%d,%d,%d,", rd.acc_x_uncomp, 
+			rd.acc_y_uncomp, rd.acc_z_uncomp);
 
 	memset(fstr, 0, 16);
 	float_to_string(rd.acc_x, fstr, 4);
@@ -166,13 +169,9 @@ int w_rd_line(FIL* fd, RocketData rd) {
 	float_to_string(rd.acc_z, fstr, 4);
 	f_printf(fd, "%s,", fstr);
 
-	f_printf(fd, "%d,", rd.mag_x);
-	f_printf(fd, "%d,", rd.mag_y);
-	f_printf(fd, "%d,", rd.mag_z);
-
-	f_printf(fd, "%d,", rd.x_gyro);
-	f_printf(fd, "%d,", rd.y_gyro);
-	f_printf(fd, "%d\n", rd.z_gyro);
+	f_printf(fd, "%d,%d,%d,%d,%d,%d\n", 
+			rd.mag_x, rd.mag_y, rd.mag_z, 
+			rd.x_gyro, rd.y_gyro, rd.z_gyro);
 
 	return 0;
 }
