@@ -95,10 +95,6 @@ int main(void) {
 
 	sd_card_init();
 
-	// start temperature/pressure acquisition now so first data is valid
-	bmp180_start_temperature(&bmp180_data);
-	bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
-
 	/* Infinite loop */
 	for (;;) {
 
@@ -147,10 +143,10 @@ int main(void) {
 		set_led_off(LED3);
 
 		set_led_on(LED4);
-		bmp180_read_temperature(&bmp180_data);
-		bmp180_read_pressure(&bmp180_data);
 		bmp180_start_temperature(&bmp180_data);
+		bmp180_read_temperature(&bmp180_data);
 		bmp180_start_pressure(&bmp180_data, BMP180_Sampling_lowpower);
+		bmp180_read_pressure(&bmp180_data);
 		set_led_off(LED4);
 
 		// update rocket packet with imu10dof data

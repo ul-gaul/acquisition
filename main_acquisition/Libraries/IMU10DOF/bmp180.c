@@ -17,13 +17,15 @@
 #define BMP180_1_8192   ((float) 0.0001220703125)
 #define BMP180_1_32768  ((float) 0.000030517578125)
 #define BMP180_1_65536  ((float) 0.0000152587890625)
-#define BMP180_1_P_SEA ((float) 0.00000993048) // BMP180_1_P_SEA is equal to 1 over pressure at sea level
+
+/* BMP180_1_P_SEA is equal to 1 over pressure at sea level */
+#define BMP180_1_P_SEA ((float) 0.000009871668311944719)
 
 /* EEPROM values */
 static int16_t AC1, AC2, AC3, B1, B2, MB, MC, MD;
 static uint16_t AC4, AC5, AC6, uncomp_temperature;
 /* OK */
-static int32_t X1, X2, X3, B3, B5, B6, T, p;
+static int32_t X1, X2, X3, B3, B5, B6, p;
 static uint32_t B4, B7, uncomp_pressure;
 static uint8_t lib_initialized = 0;
 

@@ -35,7 +35,7 @@
 #define BMP180_PRESSURE_3_DELAY		25
 
 /* whether to wait or not after temperature/pressure start functions */
-#define BMP180_START_DELAY 0
+#define BMP180_START_DELAY 1
 
 typedef enum {
 	BMP180_Res_OK = 0x00,
