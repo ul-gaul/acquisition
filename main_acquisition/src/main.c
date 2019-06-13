@@ -123,10 +123,14 @@ int main(void) {
 		rp.data.EWIndicator = gpsDataStruct.EWIndicator;
 		if (rp.data.EWIndicator != 'E' && rp.data.EWIndicator != 'W') {
 			rp.data.EWIndicator = 'F';
+		} else if (rp.data.EWIndicator == 'W' && rp.data.longitude >= 0) {
+			rp.data.longitude *= -1;
 		}
 		rp.data.NSIndicator = gpsDataStruct.NSIndicator;
 		if (rp.data.NSIndicator != 'N' && rp.data.NSIndicator != 'S') {
 			rp.data.NSIndicator = 'M';
+		} else if (rp.data.NSIndicator == 'S' && rp.data.latitude >= 0) {
+			rp.data.latitude *= -1;
 		}
 
 		set_led_off(LED1);
