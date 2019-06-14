@@ -45,27 +45,30 @@ L3GD20_result L3GD20_Init(L3GD20_scale scale) {
 	return L3GD20_Result_Ok;
 }
 
-L3GD20_result L3GD20_Read(L3GD20_struct* L3DG20_Data) {
+L3GD20_result L3GD20_Read(L3GD20_struct* L3GD20_data) {
 	float temp, s;
-
 	unsigned char resultData;
+	unsigned char values[6];
+
 	/* Read X axis */
 	resultData= i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_L);
-	L3DG20_Data->X = resultData;
+	L3GD20_data->X = resultData;
 	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_H);
-	L3DG20_Data->X |= resultData << 8;
+	L3GD20_data->X |= resultData << 8;
 
 	/* Read Y axis */
 	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Y_L);
-	L3DG20_Data->Y = resultData;
+	L3GD20_data->Y = resultData;
 	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Y_H);
-	L3DG20_Data->Y |= resultData << 8;
+	L3GD20_data->Y |= resultData << 8;
 
 	/* Read Z axis */
 	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Z_L);
-	L3DG20_Data->Z = resultData;
+	L3GD20_data->Z = resultData;
 	resultData = i2c_read(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_Z_H);
-	L3DG20_Data->Z |= resultData << 8;
+	L3GD20_data->Z |= resultData << 8;
+
+	i2c_read_multi(L3GD20_ADDRESS_R, GYRO_REGISTER_OUT_X_L, values, 6);
 
 	/* Set sensitivity scale correction */
 	if (L3GD20_INT_Scale == L3GD20_Scale_250) {
@@ -79,12 +82,12 @@ L3GD20_result L3GD20_Read(L3GD20_struct* L3DG20_Data) {
 		s = GYRO_SENSITIVITY_2000DPS;
 	}
 
-	temp = (float)L3DG20_Data->X * s;
-	L3DG20_Data->X = (int16_t) temp;
-	temp = (float)L3DG20_Data->Y * s;
-	L3DG20_Data->Y = (int16_t) temp;
-	temp = (float)L3DG20_Data->Z * s;
-	L3DG20_Data->Z = (int16_t) temp;
+	temp = (float)L3GD20_data->X * s;
+	L3GD20_data->X = (int16_t) temp;
+	temp = (float)L3GD20_data->Y * s;
+	L3GD20_data->Y = (int16_t) temp;
+	temp = (float)L3GD20_data->Z * s;
+	L3GD20_data->Z = (int16_t) temp;
 
 	/* Return OK */
 	return L3GD20_Result_Ok;
